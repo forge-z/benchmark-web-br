@@ -16,7 +16,7 @@ A correção é só automática. Não há juiz de LLM no caminho padrão, e o c�
 
 ## O que não pode aparecer
 
-Se a resposta de qualquer campo trouxer e-mail ou telefone, o campo é errado. O cargo, se um dia for preenchido no gabarito, é só o cargo, sem nome de pessoa.
+Se a resposta de qualquer campo trouxer e-mail ou telefone, o campo é errado. O cargo no gabarito, quando existe, é só o cargo, sem nome de pessoa.
 
 ## Prova 1, notícias
 
@@ -46,12 +46,14 @@ Texto vazio com gabarito preenchido é branco. Bloqueio, latência, custo e a ta
 
 Campos determinísticos: `cnpj`, `razao_social`, `cidade`, `uf`, `porte`, `segmento`, `site`, `linkedin_empresa`.
 
-- CNPJ: só os 14 dígitos, e o verificador precisa fechar. Formato de exibição `00.000.000/0000-00`
-- razão social, cidade, UF e porte: igualdade do texto dobrado. A cidade do gabarito está sem acento quando veio da Receita
-- segmento: o texto dobrado do CNAE contém ou é contido pela resposta
+- CNPJ: só os 14 dígitos, e o verificador precisa fechar. Formato de exibição `00.000.000/0000-00`. O valor esperado é o da matriz, regra abaixo
+- razão social, cidade, UF e porte: igualdade do texto dobrado. A cidade do gabarito está sem acento quando veio da Receita. O porte gravado é o texto da BrasilAPI (`DEMAIS` ou `EMPRESA DE PEQUENO PORTE`), não a sigla `EPP`
+- segmento: o texto dobrado do CNAE da matriz contém ou é contido pela resposta
 - site: o host, sem `www`
 - LinkedIn: URL de `/company/`, sem perfil de pessoa
 
-Quando o município ou a UF da CVM divergem da BrasilAPI, o gabarito usa a BrasilAPI. A BrasilAPI lê o cadastro da Receita Federal. A divergência fica na coluna `notas` e não entra na comparação. Esta regra é de endereço. Não escolhe o CNAE: se o segmento da Receita e o da CVM divergem e não há outra conferência, a célula de segmento fica vazia.
+O CNPJ do gabarito é sempre o da matriz. Confere-se o campo `descricao_identificador_matriz_filial` na BrasilAPI. Se a linha tiver uma filial, troca-se pelo CNPJ da matriz (mesma raiz de 8 dígitos). O sufixo `/0001-xx` nem sempre é a matriz: busca-se o estabelecimento com identificador MATRIZ (pode ser `/0002-xx`, `/0003-xx`, `/0011-xx`, `/0014-xx` etc.). Cidade, UF, porte e segmento passam a ser os da matriz. Responder com CNPJ de filial é errado, mesmo que os 14 dígitos e o verificador fechem.
+
+Cidade, UF, porte e segmento vêm do estabelecimento matriz na BrasilAPI. Quando o município ou a UF da CVM divergem da BrasilAPI, o gabarito usa a BrasilAPI (cadastro da Receita). A divergência fica na coluna `notas` e não entra na comparação. O segmento do gabarito é o CNAE principal da matriz na BrasilAPI, não o da CVM nem o de uma filial.
 
 `cargo_decisor_comercial` e `noticia_recente` não têm regra automática. Ficam fora do líquido, salvo a vedação de e-mail e telefone, que já marca o campo como errado. Quem quiser olhá-los usa a amostra humana, não um modelo.
