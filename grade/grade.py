@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Correção determinística. O juiz de LLM fica desligado se não houver chave e --llm.
+"""Correção só por regra automática. Não há juiz de LLM.
 
-As regras publicadas estão em grade/grading_rules.md. Este arquivo aplica a parte
-que não precisa de modelo: data, preço, CNPJ, cidade, UF, porte, razão social,
-segmento, site e a vedação de e-mail ou telefone.
+As regras publicadas estão em grade/grading_rules.md. Este arquivo aplica data,
+preço, CNPJ, cidade, UF, porte, razão social, segmento, site e a vedação de
+e-mail ou telefone. Cargo e notícia recente não entram na nota. A revisão humana
+de uma amostra fica em grade/amostra.py.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -178,7 +178,7 @@ def _company_match(field: str, expected: str, answer: str) -> bool:
     return fields.fold(expected) == fields.fold(answer) and bool(fields.fold(expected))
 
 
-def grade_company(record, expected: dict, judge: bool) -> list[dict]:
+def grade_company(record, expected: dict) -> list[dict]:
     answers = ((record.get("output") or {}).get("answers") or {})
     cells = []
     for field in fields.COMPANY_FIELDS:
@@ -189,7 +189,7 @@ def grade_company(record, expected: dict, judge: bool) -> list[dict]:
             cells.append(_cell(record, field, "errado", exp, ans, "resposta traz e-mail ou telefone"))
             continue
         if field not in DETERMINISTIC:
-            # Cargo e notícia ficam de fora enquanto o juiz não roda.
+            # Cargo e notícia não têm regra automática. Ficam fora da nota.
             continue
         if field == "cnpj" and ans and not fields.cnpj_valid(ans):
             cells.append(_cell(record, field, "errado", exp, ans, "CNPJ com dígito verificador inválido"))
@@ -210,7 +210,7 @@ def load_expected(datasets: Path) -> dict[str, dict]:
     return {"leitura": pages, "empresas": companies}
 
 
-def grade_records(records: list[dict], datasets: Path, *, judge: bool = False) -> list[dict]:
+def grade_records(records: list[dict], datasets: Path) -> list[dict]:
     expected = load_expected(datasets)
     cells = []
     for record in records:
@@ -222,39 +222,22 @@ def grade_records(records: list[dict], datasets: Path, *, judge: bool = False) -
         elif prova == "leitura":
             cells.extend(grade_page(record, expected["leitura"].get(record["item_id"], {})))
         elif prova == "empresas":
-            cells.extend(grade_company(record, expected["empresas"].get(record["item_id"], {}), judge))
-    return cells
-
-
-def maybe_judge(cells: list[dict]) -> list[dict]:
-    """Optional hook. Off unless GRADE_LLM_API_KEY and GRADE_LLM_BASE_URL are set.
-
-    The call is intentionally not made from the default path. This function is
-    the only place a judge request would be built, and tests do not call it.
-    """
-    if not os.environ.get("GRADE_LLM_API_KEY") or not os.environ.get("GRADE_LLM_BASE_URL"):
-        return cells
+            cells.extend(grade_company(record, expected["empresas"].get(record["item_id"], {})))
     return cells
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Corrige um JSONL de resultados.")
+    parser = argparse.ArgumentParser(description="Corrige um JSONL de resultados por regra automática.")
     parser.add_argument("--results", required=True)
     parser.add_argument("--datasets", default=str(ROOT / "datasets"))
     parser.add_argument("--out", default="")
-    parser.add_argument("--llm", action="store_true", help="Não faz nada sem GRADE_LLM_API_KEY. Desligado por padrão.")
     args = parser.parse_args(argv)
     path = Path(args.results)
     if not path.exists():
         print("sem resultados para corrigir")
         return 0
     records = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    judge = bool(args.llm and os.environ.get("GRADE_LLM_API_KEY"))
-    if args.llm and not judge:
-        print("juiz desligado: falta GRADE_LLM_API_KEY")
-    cells = grade_records(records, Path(args.datasets), judge=judge)
-    if judge:
-        cells = maybe_judge(cells)
+    cells = grade_records(records, Path(args.datasets))
     if args.out:
         out = Path(args.out)
         out.parent.mkdir(parents=True, exist_ok=True)

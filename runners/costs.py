@@ -15,8 +15,7 @@ from __future__ import annotations
 EXA_SEARCH_AUTO_USD = 7 / 1000
 EXA_CONTENTS_TEXT_USD = 1 / 1000
 
-# Parallel v1 list prices. The beta endpoints do not publish a separate table.
-# advanced/basic search is the higher published search price and is used as a ceiling.
+# Parallel /v1 list prices. Search omits mode, so the documented default is advanced.
 # Extract is US$ 1 / 1,000 URLs. Task core is US$ 25 / 1,000 successful runs.
 PARALLEL_SEARCH_CEILING_USD = 5 / 1000
 PARALLEL_EXTRACT_USD = 1 / 1000
@@ -29,8 +28,8 @@ TINYFISH_FETCH_FREE_URLS_PER_DAY = 1000
 # Firecrawl credits, from the public billing page.
 FIRECRAWL_SEARCH_CREDITS_PER_10 = 2
 FIRECRAWL_SCRAPE_CREDITS = 1
-# /extract is token priced: 1 credit = 15 tokens. Credits are not known before the call.
-FIRECRAWL_EXTRACT_CREDITS_PER_15_TOKENS = 1
+# JSON format on /scrape is +4 credits per page, on top of the 1-credit scrape.
+FIRECRAWL_SCRAPE_JSON_CREDITS = 5
 
 # Context.dev credits. The public page does not convert a credit to USD.
 CONTEXT_NEWS_CREDITS_PER_10 = 1

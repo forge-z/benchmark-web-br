@@ -12,11 +12,11 @@ Célula sem gabarito não entra no denominador, com uma exceção: CNPJ com díg
 
 O líquido é `100 * (certos − errados) / (certos + errados + brancos)`. Branco não soma e não subtrai. O intervalo de 95% é um bootstrap por item (consulta, URL ou empresa), 2000 reamostras, semente `20261118`.
 
-O juiz de LLM está desligado. Sem `GRADE_LLM_API_KEY` e sem `--llm`, cargo e notícia recente não são graduados. Esta versão também não envia essas células a um modelo quando a chave existe: o gancho está no código e a chamada não foi ligada. Ligar o juiz é decisão em aberto.
+A correção é só automática. Não há juiz de LLM no caminho padrão, e o código não chama modelo. Cargo e notícia recente não entram na nota. A revisão humana é uma amostra: `python -m grade.amostra --out amostra.csv --seed 20261118`. A população é ordenada antes do sorteio, então a mesma semente devolve as mesmas linhas. Com `--cells`, a amostra sai das células já graduadas.
 
 ## O que não pode aparecer
 
-Se a resposta de qualquer campo trouxer e-mail ou telefone, o campo é errado. Nome de pessoa no cargo ou na notícia também é errado quando o juiz estiver ligado. O cargo, se um dia for preenchido no gabarito, é só o cargo.
+Se a resposta de qualquer campo trouxer e-mail ou telefone, o campo é errado. O cargo, se um dia for preenchido no gabarito, é só o cargo, sem nome de pessoa.
 
 ## Prova 1, notícias
 
@@ -52,10 +52,6 @@ Campos determinísticos: `cnpj`, `razao_social`, `cidade`, `uf`, `porte`, `segme
 - site: o host, sem `www`
 - LinkedIn: URL de `/company/`, sem perfil de pessoa
 
-`cargo_decisor_comercial` e `noticia_recente` esperam o juiz. Nesta versão ficam de fora, salvo a vedação de e-mail e telefone, que já é determinística.
+Quando o município ou a UF da CVM divergem da BrasilAPI, o gabarito usa a BrasilAPI. A BrasilAPI lê o cadastro da Receita Federal. A divergência fica na coluna `notas` e não entra na comparação. Esta regra é de endereço. Não escolhe o CNAE: se o segmento da Receita e o da CVM divergem e não há outra conferência, a célula de segmento fica vazia.
 
-## O que o juiz faria, quando for ligado
-
-O juiz lê `grading_rules.md` e a página citada. Não vê o nome da ferramenta. Um valor certo citado por uma página que diz outra coisa é errado. Página que não abre não torna o valor errado sozinha: se o valor confere com um gabarito lido em outra página, a citação fica sem apoio e o valor não cai para errado por isso.
-
-Um branco honesto num fato que o gabarito marca como não encontrável seria certo. Este repositório ainda não tem fatos marcados assim.
+`cargo_decisor_comercial` e `noticia_recente` não têm regra automática. Ficam fora do líquido, salvo a vedação de e-mail e telefone, que já marca o campo como errado. Quem quiser olhá-los usa a amostra humana, não um modelo.

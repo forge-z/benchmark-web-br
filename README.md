@@ -33,10 +33,10 @@ Python 3.11, com a biblioteca padrão e uma dependência: `httpx`. CSV, JSONL, H
 |---|---|---|
 | `baseline` | nenhuma | GET da página, e RSS quando o dataset tem feed |
 | `exa` | `EXA_API_KEY` | `POST /search` e `POST /contents` |
-| `parallel` | `PARALLEL_API_KEY` | `POST /v1beta/search` e `POST /v1beta/extract` |
+| `parallel` | `PARALLEL_API_KEY` | `POST /v1/search` e `POST /v1/extract` |
 | `parallel_task_core` | `PARALLEL_API_KEY` | `POST /v1/tasks/runs` com processador `core`, só na prova 3 |
 | `tinyfish` | `TINYFISH_API_KEY` | `GET api.search.tinyfish.ai` e `POST api.fetch.tinyfish.ai` |
-| `firecrawl` | `FIRECRAWL_API_KEY` | `/v2/search`, `/v2/scrape`, `/v2/extract` |
+| `firecrawl` | `FIRECRAWL_API_KEY` | `/v2/search` e `/v2/scrape` (markdown na leitura; JSON na prova 3) |
 | `context_dev` | `CONTEXT_DEV_API_KEY` | notícias, busca web, busca de empresa e scrape |
 
 Sem a variável, o runner grava a linha com `skipped` e não chama a rede. Não há Firecrawl Agent, Parallel FindAll, TinyFish automation nem TinyFish research.
@@ -70,7 +70,10 @@ Uma execução ao vivo, ainda no limite de 1, só depois de exportar a chave:
 python -m runners.exa --prova noticias --limit 1
 python -m grade.grade --results results/exa__noticias__<run_id>.jsonl --out results/cells.jsonl
 python -m grade.score --cells results/cells.jsonl
+python -m grade.amostra --cells results/cells.jsonl --out results/amostra.csv --n 10 --seed 20261118
 ```
+
+A correção não chama modelo. `grade/amostra.py` sorteia uma amostra reprodutível para revisão humana. Sem `--cells`, sorteia as linhas dos datasets.
 
 O JSONL de resultado e o corpo em `snapshots/` ficam de fora do git. Custo e crédito estimados estão em cada chamada, com a fonte da tabela em `runners/costs.py`. Estimativa de lista não é fatura.
 
@@ -83,27 +86,23 @@ O JSONL de resultado e o corpo em `snapshots/` ficam de fora do git. Custo e cr�
 | Leitura, notícia | 20 | 20 | 20 com título e data | 0 |
 | Leitura, PDF Anfavea | 10 | 10 | 10 URLs abriram | 10 no gabarito de campos; 4 têm título lido |
 | Leitura, produto | 30 | 1 | a URL da Kabum abriu | 1 no gabarito; faltam 29 URLs |
-| Empresas | ~30 | 30 | 21 com cadastro | 9 |
+| Empresas | ~30 | 30 | 22 com cadastro | 8 |
 | Perguntas | ~10 | 10 | 10 textos | 0 |
 
 LinkedIn da empresa, cargo e notícia recente estão vazios em todas as empresas. Faixa de presença: 19 rica, 2 média, 5 fraca, 4 a revisar. O detalhe está em `datasets/README.md`.
 
 ## Decisões em aberto
 
-1. A Parallel recomenda `/v1` para integração nova. Aqui a busca e o extrato ficaram em `/v1beta`, com `max_chars_total` dentro de `excerpts`, que é onde o beta lê o campo. Trocar para `/v1` muda o corpo.
-2. O `/v2/extract` da Firecrawl sai do ar em 2026-12-10. A troca natural é o scrape com JSON, que custa mais créditos.
-3. A busca de notícias da Context.dev não tem país `br`. O filtro é idioma `pt` mais a data, então Portugal entra.
-4. O `tbs` da Firecrawl não filtra a fonte `news`. A prova 1 usa a fonte `web` com `tbs`.
-5. Exa está em `type: auto` (teto de US$ 7 / 1.000). `lite` é mais barato e pode caber melhor em crédito grátis.
-6. A busca da Parallel beta não tem preço próprio. A estimativa usa o teto advanced da v1, US$ 5 / 1.000.
-7. O painel de 25 sites não restringe o domínio da busca. Cobertura do painel ainda não é nota.
-8. O baseline da prova 3 se abstém. Ele não recebe o site oficial, senão a resposta vazaria. Dá para criar depois uma coluna `url_partida`, separada do gabarito.
-9. Duplicata de URL é métrica, não entra no líquido. Consulta com mais itens pesa mais do que consulta com um item.
-10. O gancho do juiz existe e não envia pedido. Cargo e notícia ficam de fora da nota até alguém ligar o modelo (`GRADE_LLM_API_KEY`, `GRADE_LLM_BASE_URL`, `GRADE_LLM_MODEL`).
-11. Faltam 29 URLs de produto. Daqui, Mercado Livre, Americanas e Shopee não entregaram link de produto no HTML, e Amazon, Magalu, Casas Bahia e Carrefour não abriram.
-12. Tupy e Portobello: a cidade da CVM não bate com a da BrasilAPI. A cidade ficou vazia.
-13. `parallel_task_core` é uma ferramenta à parte, só na prova 3. Pode ser coluna de referência em vez de entrar no mesmo ranking.
-14. Preço de marketplace muda. A forma canônica está definida; o gabarito de preço ainda está vazio.
+1. A busca de notícias da Context.dev não tem país `br`. O filtro é idioma `pt` mais a data, então Portugal entra.
+2. O `tbs` da Firecrawl não filtra a fonte `news`. A prova 1 usa a fonte `web` com `tbs`.
+3. Exa está em `type: auto` (teto de US$ 7 / 1.000). `lite` é mais barato e pode caber melhor em crédito grátis.
+4. O painel de 25 sites não restringe o domínio da busca. Cobertura do painel ainda não é nota.
+5. O baseline da prova 3 se abstém. Ele não recebe o site oficial, senão a resposta vazaria. Dá para criar depois uma coluna `url_partida`, separada do gabarito.
+6. Duplicata de URL é métrica, não entra no líquido. Consulta com mais itens pesa mais do que consulta com um item.
+7. Faltam 29 URLs de produto. Daqui, Mercado Livre, Americanas e Shopee não entregaram link de produto no HTML, e Amazon, Magalu, Casas Bahia e Carrefour não abriram.
+8. O segmento da Tupy continua vazio. A regra da BrasilAPI cobre endereço, não CNAE, e a CVM descreve metalurgia.
+9. `parallel_task_core` é uma ferramenta à parte, só na prova 3. Pode ser coluna de referência em vez de entrar no mesmo ranking.
+10. Preço de marketplace muda. A forma canônica está definida; o gabarito de preço ainda está vazio.
 
 ## Privacidade
 

@@ -49,15 +49,15 @@ O preço canônico é `R$ 1.234,56`. A comparação é nessa forma, não no text
 Trinta empresas, em quatro grupos: indústria de Santa Catarina, fabricantes e grupos industriais com presença nacional, e distribuidores de ferramenta de corte. A faixa de presença foi observada, não estimada:
 
 - rica: CNPJ confirmado na BrasilAPI e site oficial que abriu
-- média: CNPJ confirmado, site abriu, e a cidade da CVM não é a mesma da BrasilAPI (Tupy, Portobello). A cidade ficou vazia
+- média: CNPJ confirmado, site abriu, e a cidade da CVM não é a mesma da BrasilAPI (Tupy, Portobello). O gabarito de cidade e UF usa a BrasilAPI
 - fraca: site de distribuidor regional abriu e o HTML não traz CNPJ
 - a revisar: cadastro ok e site não abriu (Intelbras, Marcopolo), ou site abriu sem CNPJ conferido (OSG, Tungaloy)
 
-Vinte e uma linhas têm o bloco cadastral preenchido e `gabarito_status` verificado. Nove ficam a revisar. LinkedIn, cargo e notícia recente estão vazios em todas. Páginas de distribuidor listam gente, e-mail e telefone; nada disso foi copiado. O cargo, se for preenchido, é o cargo público da função, sem nome de pessoa.
+Vinte e duas linhas têm o bloco cadastral preenchido e `gabarito_status` verificado. Oito ficam a revisar. Tupy continua a revisar porque o segmento (CNAE da Receita contra o setor da CVM) ficou vazio. LinkedIn, cargo e notícia recente estão vazios em todas. Páginas de distribuidor listam gente, e-mail e telefone; nada disso foi copiado. O cargo, se for preenchido, é o cargo público da função, sem nome de pessoa.
 
 As dez perguntas são as mesmas para toda ferramenta: CNPJ, razão social, cidade, UF, porte, segmento, site, LinkedIn da empresa, cargo do decisor comercial, notícia recente. O runner recebe o nome e essas perguntas. Não recebe CNPJ, site nem cidade.
 
-Cada ferramenta faz busca e extrato com o próprio par de endpoints. `parallel_task_core` é a referência da prova 3: um pedido ao processador `core`, com schema de saída dos dez campos. Não entra nas provas 1 e 2.
+Cada ferramenta faz busca e extrato com o próprio par de endpoints, todos na API atual. A Parallel usa `/v1/search` e `/v1/extract`. A Firecrawl, na prova 3, faz `/v2/scrape` com formato JSON (schema e prompt) em até três URLs da busca. `parallel_task_core` é a referência da prova 3: um pedido ao processador `core` em `/v1/tasks/runs`, com `output_schema` do tipo `json`. Não entra nas provas 1 e 2.
 
 O baseline se abstém nesta prova. Dar a ele o site oficial seria entregar a resposta. Uma coluna futura `url_partida`, separada do gabarito, permitiria um baseline que lê uma página de partida sem ver o esperado.
 
@@ -93,14 +93,18 @@ Data, preço em reais e CNPJ não passam por modelo.
 - Data de página: a mesma data civil em `America/Sao_Paulo`, ou diferença de até 26 horas. O feed da CIMM veio com fuso `+0300`; a data foi gravada em UTC e a tolerância cobre um dia de fuso trocado. Vale revisar esse fuso.
 - Preço: a forma canônica acima.
 - CNPJ: 14 dígitos e os dois verificadores. A comparação ignora pontuação.
-- Razão social, cidade, UF e porte: igualdade sem acento e sem caixa. A cidade do gabarito está como a Receita devolve, sem acento.
-- Segmento: um texto contém o outro, depois de dobrar.
+- Razão social, cidade, UF e porte: igualdade sem acento e sem caixa. A cidade do gabarito está como a Receita devolve, sem acento. Se a CVM divergir no município ou na UF, vale a BrasilAPI. A divergência fica em `notas`.
+- Segmento: um texto contém o outro, depois de dobrar. A regra da BrasilAPI não escolhe o CNAE. Tupy fica sem segmento por isso.
 - Site: o host, sem `www`.
 - LinkedIn: só URL com `/company/`. Perfil de pessoa não conta e não é armazenado.
 
-Cargo e notícia recente estão marcados como juiz. O gancho lê `GRADE_LLM_API_KEY` e, nesta versão, não envia pedido. Sem o juiz, esses dois campos ficam de fora, salvo e-mail ou telefone na resposta, que já é errado por regra fixa.
+Cargo e notícia recente não entram na nota. Não há juiz de LLM: o código não chama modelo. E-mail ou telefone na resposta continua errado por regra fixa. A revisão humana é uma amostra reprodutível:
 
-O juiz, quando alguém ligar, deve ler as regras e a página citada, sem ver o nome da ferramenta. Um valor que confere com o gabarito e cuja citação não abre não vira errado só por isso.
+```bash
+python -m grade.amostra --cells results/cells.jsonl --out results/amostra.csv --n 10 --seed 20261118
+```
+
+Sem `--cells`, o sorteio usa as linhas dos datasets. A população é ordenada e a semente é `20261118`, a mesma do bootstrap. O CSV traz `revisao_humana` e `comentario` vazios.
 
 ## Custo
 
@@ -110,13 +114,13 @@ Cada chamada grava crédito estimado e custo estimado em dólares, com a frase d
 |---|---|
 | Exa busca `auto` | US$ 7 / 1.000, até 10 resultados, mais highlights |
 | Exa contents | US$ 1 / 1.000 páginas |
-| Parallel busca | teto advanced da v1, US$ 5 / 1.000. O beta não publica preço próprio |
+| Parallel busca | modo advanced, o padrão da `/v1`, US$ 5 / 1.000 |
 | Parallel extrato | US$ 1 / 1.000 URLs |
 | Parallel Task core | US$ 25 / 1.000 execuções com sucesso. Falha zera a estimativa |
 | TinyFish | US$ 0 dentro da cota documentada (12.000 buscas/dia, 1.000 URLs de fetch/dia). Excedente não está fixado no código |
 | Firecrawl busca | 2 créditos por 10 resultados. Dólar por crédito não está na tabela usada |
-| Firecrawl scrape markdown | 1 crédito. Modo JSON não é usado na leitura, para não gastar o extra |
-| Firecrawl extract | 1 crédito a cada 15 tokens. `enableWebSearch` fica falso |
+| Firecrawl scrape markdown | 1 crédito. A leitura de página usa só markdown |
+| Firecrawl scrape JSON | 5 créditos por página (1 do scrape + 4 do formato JSON), até 3 URLs na prova 3 |
 | Context.dev | 1 crédito por 10 notícias, 1 por 10 na busca web, 1 no scrape, 2 na busca de empresa em modo `fast`. Dólar por crédito não publicado |
 
 O custo por 1.000 consultas é a média do custo estimado das linhas, vezes 1.000. Não é a fatura.
@@ -133,7 +137,7 @@ O custo por 1.000 consultas é a média do custo estimado das linhas, vezes 1.00
 
 A amostra de empresas com cadastro verificado é, em grande parte, companhia aberta. Elas têm site e CNPJ fáceis de achar. A faixa "rica" mede "o site abriu e o CNPJ confere", não autoridade de marca. Várias não repetem o CNPJ no HTML; o vínculo é o nome na CVM mais a BrasilAPI mais um site que abriu com esse nome.
 
-Tupy e Portobello têm conflito de cidade entre CVM e BrasilAPI. Não escolhi um lado.
+Tupy e Portobello: a CVM e a BrasilAPI divergem no município. O gabarito usa a BrasilAPI (Tupy em SAO PAULO/SP, Portobello em TIJUCAS/SC), conferida de novo em 2026-11-18. O segmento da Tupy continua vazio.
 
 O porte não discrimina: quem está preenchido é `DEMAIS`.
 
@@ -145,7 +149,7 @@ Context.dev não filtra notícia por Brasil. Firecrawl não aplica `tbs` na font
 
 O fuso `+0300` da CIMM pode ser erro do CMS. A data foi convertida para UTC e a tolerância de um dia absorve o caso na prova 2. Não absorve uma matéria no limite da janela de 48 horas.
 
-Nenhuma chamada paga foi feita. Os runners foram exercitados em `--dry-run`. O schema do pedido pode falhar ao vivo (um 422 da Parallel beta, por exemplo) e isso só aparece com crédito.
+Nenhuma chamada paga foi feita. Os runners foram exercitados em `--dry-run`. O schema do pedido pode falhar ao vivo (um 422, por exemplo) e isso só aparece com crédito.
 
 ## Como reproduzir uma rodada
 
@@ -155,6 +159,7 @@ Nenhuma chamada paga foi feita. Os runners foram exercitados em `--dry-run`. O s
 4. `--limit 0` só quando o custo estimado da amostra de 1 item, vezes o tamanho do dataset, couber no crédito grátis.
 5. `python -m grade.grade --results <arquivo.jsonl> --out results/cells.jsonl`
 6. `python -m grade.score --cells results/cells.jsonl`
+7. `python -m grade.amostra --cells results/cells.jsonl --out results/amostra.csv --n 10 --seed 20261118`
 
 O arquivo de células e o JSONL de resultado ficam fora do git. Quem publicar um resultado sobe o agregado (líquido, intervalo, custo por 1.000, latência) e cita a versão do dataset. O corpo extraído de terceiro não sobe.
 
