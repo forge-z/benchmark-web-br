@@ -1,0 +1,11 @@
+id,campo,pergunta,tipo_correcao,notas
+cnpj,cnpj,"Qual é o CNPJ da matriz? Responda só no formato 00.000.000/0000-00. Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+razao_social,razao_social,"Qual é a razão social da matriz? Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+cidade,cidade,"Em qual município está a sede cadastral na Receita Federal? Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+uf,uf,"Qual é a UF da sede cadastral? Responda a sigla de duas letras. Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+porte,porte,"Qual é o porte na Receita Federal? Use um de: MEI, ME, EPP, DEMAIS. Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+segmento,segmento,"Qual é a descrição da atividade econômica principal (CNAE)? Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+site,site,"Qual é a URL do site oficial? Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+linkedin_empresa,linkedin_empresa,"Qual é a URL do LinkedIn da empresa, a página da organização? Não use perfil de pessoa. Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+cargo_decisor_comercial,cargo_decisor_comercial,"Qual é o cargo de quem decide a compra, em texto público? Responda só o cargo, sem nome de pessoa, e-mail ou telefone. Se não souber, deixe vazio.",juiz,O mesmo texto entra no pedido de todas as ferramentas.
+noticia_recente,noticia_recente,"Cite uma notícia dos últimos 90 dias sobre a empresa: título, URL e data ISO. Sem nome de pessoa. Se não souber, deixe vazio.",juiz,O mesmo texto entra no pedido de todas as ferramentas.

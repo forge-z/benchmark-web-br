@@ -1,0 +1,41 @@
+id,consulta,tema,janela_horas,idioma,gabarito_status,notas
+q01,notícias das últimas 48 horas sobre investimento em usinagem no Brasil,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q02,novas máquinas-ferramenta anunciadas no Brasil nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q03,preço do aço e impacto na indústria metalmecânica brasileira nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q04,feiras e eventos de usinagem no Brasil noticiados nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q05,ferramentas de corte: lançamentos noticiados no Brasil nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q06,indústria de Santa Catarina: investimento fabril noticiado nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q07,falta de mão de obra na indústria metalmecânica brasileira nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q08,importação de máquinas industriais pelo Brasil nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q09,manutenção industrial e paradas de fábrica noticiadas no Brasil nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q10,fundição e forjaria: produção ou investimento no Brasil nas últimas 48 horas,industria,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q11,Selic e decisão do Banco Central nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q12,cotação do dólar e efeito na indústria brasileira nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q13,Ibovespa: o que moveu a bolsa nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q14,inflação IPCA divulgada ou comentada nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q15,emprego industrial no Brasil nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q16,crédito para a indústria brasileira nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q17,exportação brasileira de manufaturados nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q18,reforma tributária e efeito na indústria nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q19,Petrobras: preço de combustível nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q20,câmbio e commodities metálicas nas últimas 48 horas,economia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q21,inteligência artificial em empresas brasileiras nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q22,data centers no Brasil nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q23,chips e semicondutores: notícias do Brasil nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q24,5G e redes móveis no Brasil nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q25,cibersegurança em empresas brasileiras nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q26,startups industriais brasileiras nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q27,software de gestão para fábrica no Brasil nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q28,regulação de plataformas digitais no Brasil nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q29,nuvem e infraestrutura de TI no Brasil nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q30,robôs e automação industrial no Brasil nas últimas 48 horas,tecnologia,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q31,produção de veículos no Brasil nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q32,Anfavea: emplacamentos ou carta mensal nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q33,carros elétricos e híbridos no Brasil nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q34,picapes produzidas no Brasil nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q35,investimento de montadora em fábrica brasileira nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q36,autopeças: exportação ou produção no Brasil nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q37,preço de carro novo no Brasil nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q38,caminhões e ônibus: vendas no Brasil nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q39,recall de veículos no Brasil nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.
+q40,combustível e frota flex no Brasil nas últimas 48 horas,automotivo,48,pt-BR,a revisar,A consulta é o instrumento. Não há URL esperada: a janela de 48 h é relativa à hora da execução.

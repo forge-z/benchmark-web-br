@@ -1,0 +1,26 @@
+id,nome,url,rss_url,tema,http_status,verificado_em,gabarito_status,notas
+s01,CIMM,https://www.cimm.com.br/,https://www.cimm.com.br/portal/noticia/rss,industria,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s02,Usinagem Brasil,https://www.usinagem-brasil.com.br/,https://www.usinagem-brasil.com.br/feed/,industria,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s03,ABM Brasil,https://www.abmbrasil.com.br/,,industria,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. RSS não gravado: o feed não foi confirmado nesta data.
+s04,Revista Manutenção,https://www.revistamanutencao.com.br/,https://revistamanutencao.com.br/rss/,industria,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s05,Portal Metálica,https://www.metalica.com.br/,https://metalica.com.br/feed/,industria,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s06,Aranda Editora,https://www.arandanet.com.br/,,industria,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. RSS não gravado: o feed não foi confirmado nesta data.
+s07,FIESC,https://www.fiesc.com.br/,,industria,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. RSS não gravado: o feed não foi confirmado nesta data.
+s08,Abinee,https://www.abinee.org.br/,https://www.abinee.org.br/feed/,industria,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s09,Valor Econômico,https://valor.globo.com/,https://valor.globo.com/rss/valor,economia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s10,InfoMoney,https://www.infomoney.com.br/,https://www.infomoney.com.br/feed/,economia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s11,Exame,https://exame.com/,https://exame.com/feed/,economia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s12,Agência Brasil,https://agenciabrasil.ebc.com.br/,https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml,economia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s13,CNN Brasil Economia,https://www.cnnbrasil.com.br/economia/,,economia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. RSS não gravado: o feed não foi confirmado nesta data.
+s14,Estadão Economia,https://www.estadao.com.br/economia/,https://www.estadao.com.br/arc/outboundfeeds/feeds/rss/sections/economia/,economia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s15,Money Times,https://www.moneytimes.com.br/,https://www.moneytimes.com.br/feed/,economia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s16,Canaltech,https://canaltech.com.br/,https://canaltech.com.br/rss/,tecnologia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s17,Olhar Digital,https://olhardigital.com.br/,https://olhardigital.com.br/feed/,tecnologia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s18,Baguete,https://www.baguete.com.br/,https://www.baguete.com.br/feed/,tecnologia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s19,TecMundo,https://www.tecmundo.com.br/,,tecnologia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. RSS não gravado: o feed não foi confirmado nesta data.
+s20,Mobile Time,https://www.mobiletime.com.br/,https://www.mobiletime.com.br/feed/,tecnologia,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s21,Automotive Business,https://www.automotivebusiness.com.br/,,automotivo,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. RSS não gravado: o feed não foi confirmado nesta data.
+s22,Motor1,https://motor1.uol.com.br/,,automotivo,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. RSS não gravado: o feed não foi confirmado nesta data.
+s23,Quatro Rodas,https://quatrorodas.abril.com.br/,https://quatrorodas.abril.com.br/ultimas-noticias/rss,automotivo,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s24,Autoesporte,https://autoesporte.globo.com/,https://autoesporte.globo.com/rss/autoesporte,automotivo,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. Feed RSS respondeu e entregou itens na mesma data.
+s25,InsideEVs Brasil,https://insideevs.uol.com.br/,,automotivo,200,2026-11-18,verificado,Homepage HTTP 200 em 2026-11-18. RSS não gravado: o feed não foi confirmado nesta data.
