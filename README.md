@@ -8,7 +8,7 @@ Isto é a estrutura inicial. Os datasets têm lacunas contadas. Nenhuma chamada 
 
 ## Rodada 1
 
-Números de 2026-11-18 em [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/RESUMO.md). Líquido = certo − errado por 100 células, intervalo de 95%. Entre parênteses, amostra menor que o dataset.
+Números de 2026-11-18 em [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/RESUMO.md). Líquido = certo − errado por 100 células, em pontos de −100 a 100, com intervalo de 95%. Entre parênteses, amostra menor que o dataset.
 
 | Ferramenta | Notícias | Leitura | Empresas |
 |---|---:|---:|---:|
@@ -19,6 +19,17 @@ Números de 2026-11-18 em [`results/round-1-2026-11-18/`](results/round-1-2026-1
 | tinyfish | -45,3 [-63,4; -22,7] | 13,9 [3,5; 23,7] | 0,5 [0,0; 1,5] |
 | firecrawl | 0,0 [0,0; 0,0] | 21,7 [7,6; 36,5] | -7,1 [-26,2; 11,9] (12/30) |
 | context_dev | 100,0 [100,0; 100,0] | 33,9 [17,6; 50,0] | 10,0 [2,4; 17,0] (24/30) |
+
+### Ressalvas
+
+1. Amostras desiguais na coluna Empresas. A Firecrawl rodou 12 das 30 e a Context.dev 24 das 30. Esses dois líquidos não são comparáveis direto com quem rodou as 30. Notícias (40 consultas) e leitura (60 URLs) têm uma linha por item.
+2. O líquido é em pontos, não em porcentagem. A conta é a % de certos menos a % de errados, de −100 a 100.
+3. Uma rodada, sem repetição: 40 consultas, 60 URLs, 30 empresas. Diferença de poucos pontos pode ser ruído.
+4. Cada ferramenta rodou por um runner deste repositório, não necessariamente na melhor configuração do fornecedor. O número mede ferramenta mais runner. A Exa chegou a 100 em notícias com a API completa (`/search` e `/contents`, com `category: news` e a janela de data); a execução anterior foi descartada. A leitura da Context.dev subiu de −1,7 para 33,9 depois de corrigir o runner, sem chamada nova.
+5. Parallel Task é um agente de pesquisa, com mediana de 2,4 min por empresa. Não é comparável às ferramentas de busca e extração, que ficam em segundos. Por isso a linha é separada.
+6. Próximo passo de baixo custo: completar as 18 empresas que faltam na Firecrawl e as 6 da Context.dev, quando houver crédito.
+
+Os desvios desta rodada estão em `METODOLOGIA.md`, seção "Rodada 1".
 
 ## Por que Python
 

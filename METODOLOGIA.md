@@ -178,3 +178,14 @@ Resultados em `results/round-1-2026-11-18/`. O que esta rodada fez diferente do 
 7. **Cobrança duplicada possível.** Alguns programas do gateway caíram por timeout de transporte, e as chamadas sem resposta foram refeitas. Elas podem ter sido cobradas duas vezes. O saldo lido antes e depois está na tabela de custo do PR, e a estimativa por item não inclui essas repetições.
 8. **Context.dev leitura.** O runner passou a ler título e data do `metadata` do scrape (com fallback em openGraph e JSON-LD `datePublished`). As 60 respostas já coletadas foram reprocessadas sem novas chamadas. O líquido foi de −1,7 para 33,9.
 9. **Notícias.** A janela de 48 h dos pedidos foi fixada na primeira execução de cada ferramenta. A correção usa o `started_at` de cada item; a diferença entre os dois é menor que 1 hora.
+
+### Ressalvas
+
+Como ler a tabela em `results/round-1-2026-11-18/`:
+
+1. **Amostras desiguais.** Na prova de empresas, a Firecrawl tem 12 linhas (e01–e12) e a Context.dev tem 24 (e01–e24). O líquido dessas duas não é comparável direto ao das ferramentas com as 30. Notícias (40 consultas) e leitura (60 URLs) têm uma linha por item.
+2. **O líquido é em pontos.** A conta é a % de certos menos a % de errados, de −100 a 100: `100 × (certos − errados) / (certos + errados + brancos)`. Não é uma porcentagem.
+3. **Uma rodada, sem repetição.** São 40 consultas, 60 URLs e 30 empresas. Diferença de poucos pontos pode ser ruído.
+4. **Ferramenta mais runner.** Cada ferramenta rodou por um runner deste repositório, não necessariamente na melhor configuração do fornecedor. O número mede os dois juntos. A Exa chegou a 100 em notícias na execução pela API completa (item 5: `/search` e `/contents`, com `category: news` e a janela de data). A leitura da Context.dev subiu de −1,7 para 33,9 depois de corrigir o runner (item 8), nas mesmas 60 respostas, sem chamada nova.
+5. **Parallel Task à parte.** É um agente de pesquisa. A mediana foi 2,4 min por empresa (142800 ms na tabela de latência). Busca e extração ficam em segundos. A linha fica separada porque o tempo e o tipo de chamada são outros.
+6. **Próximo passo barato.** Quando houver crédito, completar as 18 empresas que faltam na Firecrawl (e13–e30) e as 6 da Context.dev (e25–e30).

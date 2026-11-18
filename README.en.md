@@ -8,7 +8,7 @@ This is the initial skeleton. Dataset gaps are counted. No paid API call was mad
 
 ## Round 1
 
-Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, with a 95% interval. Parentheses mark a sample smaller than the dataset. Round deviations are in `METODOLOGIA.md`, section "Rodada 1" (Portuguese; there is no separate English methodology).
+Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, in points from −100 to 100, with a 95% interval. Parentheses mark a sample smaller than the dataset. Round deviations are in `METODOLOGIA.md`, section "Rodada 1" (Portuguese; there is no separate English methodology).
 
 | Tool | News | Reading | Companies |
 |---|---:|---:|---:|
@@ -19,6 +19,15 @@ Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-20
 | tinyfish | -45.3 [-63.4; -22.7] | 13.9 [3.5; 23.7] | 0.5 [0.0; 1.5] |
 | firecrawl | 0.0 [0.0; 0.0] | 21.7 [7.6; 36.5] | -7.1 [-26.2; 11.9] (12/30) |
 | context_dev | 100.0 [100.0; 100.0] | 33.9 [17.6; 50.0] | 10.0 [2.4; 17.0] (24/30) |
+
+### Caveats
+
+1. Unequal samples in the Companies column. Firecrawl ran 12 of 30 and Context.dev ran 24 of 30. Those two nets are not directly comparable to tools that ran all 30. News (40 queries) and reading (60 URLs) have one row per item.
+2. The net is in points, not a percentage. It is the percent right minus the percent wrong, on a scale from −100 to 100.
+3. One round, no repeats: 40 queries, 60 URLs, 30 companies. A gap of a few points can be noise.
+4. Each tool ran through a runner in this repo, not necessarily in the vendor's best setup. The number measures tool plus runner. Exa reached 100 on news with the full API (`/search` and `/contents`, with `category: news` and the date window); the earlier run was discarded. Context.dev reading went from −1.7 to 33.9 after the runner was fixed, with no new calls.
+5. Parallel Task is a research agent, with a median of 2.4 minutes per company. It is not comparable to the search and extraction tools, which finish in seconds. That is why the row is separate.
+6. Low-cost next step: finish the 18 missing Firecrawl companies and the 6 missing Context.dev companies when there is credit.
 
 ## Why Python
 
