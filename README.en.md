@@ -70,11 +70,11 @@ Result JSONL and `snapshots/` stay out of git. Each call records an estimated cr
 | pt-BR queries | ~40 | 40 | 40 query strings | 40 have no expected URL, on purpose |
 | Page read, news | 20 | 20 | 20 with title and date | 0 |
 | Page read, Anfavea PDF | 10 | 10 | 10 URLs opened | field keys open; 4 have a title that was read |
-| Page read, product | 30 | 1 | the Kabum URL opened | 29 product URLs are missing |
-| Companies | ~30 | 30 | 22 with a cadastral block | 8 |
+| Page read, product | 30 | 30 | 26 with a title (Kabum, Mercado Livre, Amazon, Casas Bahia, Americanas, Magalu) | 4 Shopee URLs unread; 1 Shopee URL still missing |
+| Companies | ~30 | 30 | 29 with the head-office cadastral block | 1 (KSC Ferramentas, no CNPJ) |
 | Questions | ~10 | 10 | 10 question strings | 0 |
 
-Company LinkedIn, the commercial role, and recent news are empty on every row. Presence bands: 19 rich, 2 medium, 5 thin, 4 still open. When the CVM city disagrees with BrasilAPI, the answer key uses BrasilAPI: Tupy is SAO PAULO/SP and Portobello is TIJUCAS/SC.
+The answer key CNPJ is the head office on BrasilAPI (`descricao_identificador_matriz_filial`). A `/0001` suffix does not prove that. Tupy, Romi, and Randoncorp were switched from a branch to the head office. Company LinkedIn is filled on three rows, only `/company/` URLs. The commercial role is filled only for Kennatech, as a public title, with no personal name. Recent news is still empty. Presence bands: 25 rich, 2 medium, 1 thin, 2 still open. When the CVM city disagrees with BrasilAPI, the key uses BrasilAPI. Portobello stays TIJUCAS/SC. Tupy's head office is JOINVILLE/SC.
 
 Scoring is automatic only. There is no LLM judge. `python -m grade.amostra` draws a reproducible sample (`--seed`, default `20261118`) and writes a CSV with empty `revisao_humana` and `comentario` columns.
 
@@ -86,9 +86,9 @@ Scoring is automatic only. There is no LLM judge. `python -m grade.amostra` draw
 4. The 25-site panel does not restrict the search domain. Panel coverage is not a score yet.
 5. The task-3 baseline abstains. It is not given the official site, because that would leak the answer.
 6. Duplicate URLs are a separate metric, not part of the net. A query with more items weighs more than a query with one.
-7. 29 product URLs are missing. From this environment the marketplaces did not yield a product link, or did not open.
-8. Tupy's segment cell stays empty. The BrasilAPI rule covers the address, not the CNAE, and the CVM text says metalurgia.
+7. KSC Ferramentas still has no CNPJ. Two active Joinville registrations have similar names, and neither was tied to the site.
+8. Shopee: 4 URLs are listed, none of the pages were read, and 1 URL is still missing to reach 5. On several verified product rows, price, seller, or availability stayed empty.
 9. `parallel_task_core` is a separate tool id on task 3. It can stay a reference column instead of joining the ranking.
-10. Marketplace prices move. The canonical `R$` form is defined; the price key is still empty.
+10. Marketplace prices are a 2026-11-18 snapshot and will go stale. The canonical form is still `R$ 1.234,56`.
 
 No personal names, emails, phone numbers, or secrets are stored. A decision-maker, if filled later, is a role, not a person.

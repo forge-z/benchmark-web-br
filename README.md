@@ -85,11 +85,11 @@ O JSONL de resultado e o corpo em `snapshots/` ficam de fora do git. Custo e cr�
 | Consultas pt-BR | ~40 | 40 | 40 textos | 40 sem URL esperada, de propósito |
 | Leitura, notícia | 20 | 20 | 20 com título e data | 0 |
 | Leitura, PDF Anfavea | 10 | 10 | 10 URLs abriram | 10 no gabarito de campos; 4 têm título lido |
-| Leitura, produto | 30 | 1 | a URL da Kabum abriu | 1 no gabarito; faltam 29 URLs |
-| Empresas | ~30 | 30 | 22 com cadastro | 8 |
+| Leitura, produto | 30 | 30 | 26 com título (Kabum, Mercado Livre, Amazon, Casas Bahia, Americanas, Magalu) | 4 Shopee sem página lida; falta 1 URL |
+| Empresas | ~30 | 30 | 29 com cadastro da matriz | 1 (KSC Ferramentas, sem CNPJ) |
 | Perguntas | ~10 | 10 | 10 textos | 0 |
 
-LinkedIn da empresa, cargo e notícia recente estão vazios em todas as empresas. Faixa de presença: 19 rica, 2 média, 5 fraca, 4 a revisar. O detalhe está em `datasets/README.md`.
+LinkedIn da empresa entrou em três linhas, só com URL `/company/`. O cargo entrou só na Kennatech, como título público, sem nome de pessoa. Notícia recente continua vazia. Faixa de presença: 25 rica, 2 média, 1 fraca, 2 a revisar. O detalhe está em `datasets/README.md`.
 
 ## Decisões em aberto
 
@@ -99,11 +99,11 @@ LinkedIn da empresa, cargo e notícia recente estão vazios em todas as empresas
 4. O painel de 25 sites não restringe o domínio da busca. Cobertura do painel ainda não é nota.
 5. O baseline da prova 3 se abstém. Ele não recebe o site oficial, senão a resposta vazaria. Dá para criar depois uma coluna `url_partida`, separada do gabarito.
 6. Duplicata de URL é métrica, não entra no líquido. Consulta com mais itens pesa mais do que consulta com um item.
-7. Faltam 29 URLs de produto. Daqui, Mercado Livre, Americanas e Shopee não entregaram link de produto no HTML, e Amazon, Magalu, Casas Bahia e Carrefour não abriram.
-8. O segmento da Tupy continua vazio. A regra da BrasilAPI cobre endereço, não CNAE, e a CVM descreve metalurgia.
+7. KSC Ferramentas continua sem CNPJ. Há dois cadastros ativos em Joinville com razão parecida e nenhum foi amarrado ao site.
+8. Shopee: 4 URLs listadas, nenhuma página lida, e falta 1 para fechar 5. Em várias fichas já verificadas, preço, vendedor ou disponibilidade ficaram vazios.
 9. `parallel_task_core` é uma ferramenta à parte, só na prova 3. Pode ser coluna de referência em vez de entrar no mesmo ranking.
-10. Preço de marketplace muda. A forma canônica está definida; o gabarito de preço ainda está vazio.
+10. Preço de marketplace é um snapshot de 2026-11-18 e envelhece. A forma canônica continua `R$ 1.234,56`.
 
 ## Privacidade
 
-Repositório público. Sem nome de pessoa, e-mail, telefone ou chave. O cargo do decisor, se um dia for preenchido, é o cargo, não a pessoa.
+Repositório público. Sem nome de pessoa, e-mail, telefone ou chave. O cargo gravado é o título, não a pessoa.

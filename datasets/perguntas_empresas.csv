@@ -3,7 +3,7 @@ cnpj,cnpj,"Qual é o CNPJ da matriz? Responda só no formato 00.000.000/0000-00.
 razao_social,razao_social,"Qual é a razão social da matriz? Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
 cidade,cidade,"Em qual município está a sede cadastral na Receita Federal? Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
 uf,uf,"Qual é a UF da sede cadastral? Responda a sigla de duas letras. Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
-porte,porte,"Qual é o porte na Receita Federal? Use um de: MEI, ME, EPP, DEMAIS. Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
+porte,porte,"Qual é o porte na Receita Federal, no texto da BrasilAPI? Use um de: MEI, ME, EMPRESA DE PEQUENO PORTE, DEMAIS. Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas. O gabarito guarda o texto da BrasilAPI, não a sigla EPP.
 segmento,segmento,"Qual é a descrição da atividade econômica principal (CNAE)? Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
 site,site,"Qual é a URL do site oficial? Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.
 linkedin_empresa,linkedin_empresa,"Qual é a URL do LinkedIn da empresa, a página da organização? Não use perfil de pessoa. Se não souber, deixe vazio.",deterministico,O mesmo texto entra no pedido de todas as ferramentas.

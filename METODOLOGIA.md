@@ -33,7 +33,7 @@ A ferramenta recebe uma URL e devolve título, texto limpo, data, preço em reai
 
 A meta era cerca de 60 URLs: 20 notícias, 10 PDFs e 30 páginas de produto. As 20 notícias têm título e data lidos na página ou no RSS da mesma matéria. Os 10 PDFs são cartas da Anfavea (`carta477.pdf` a `carta486.pdf`); as dez URLs abriram com HTTP 200. Quatro títulos foram lidos na primeira página (edições 479, 480, 481 e 486). Os outros seis títulos ficaram vazios. Não inferi o mês pela sequência.
 
-Páginas de produto: 1 de 30. A URL da Kabum que o HTML da busca citava abriu. O título da página era genérico e o preço visível no HTML não foi amarrado ao produto, então esses campos ficaram vazios. Mercado Livre, Americanas e Shopee abriram a busca e o HTML não trazia link de produto. Amazon, Magalu, Casas Bahia e Carrefour não abriram daqui (403 ou 503). Essas 29 URLs não foram inventadas.
+Páginas de produto: 30 linhas. 26 estão verificadas: Kabum (1, com título, preço `R$ 49,98` e vendedor), Mercado Livre (5), Amazon.com.br (5), Casas Bahia (5), Americanas (5) e Magalu (5). Preço, vendedor ou disponibilidade ficam vazios quando a página não amarrava o campo ao produto; célula vazia não entra no denominador. Quatro URLs da Shopee (l57–l60) estão a revisar: a leitura caiu na verificação de tráfego e título, preço, vendedor e disponibilidade ficaram vazios. Falta 1 URL da Shopee para fechar 5; essa quinta linha não foi inventada. O preço gravado é o snapshot de 2026-11-18.
 
 Métricas:
 
@@ -49,11 +49,11 @@ O preço canônico é `R$ 1.234,56`. A comparação é nessa forma, não no text
 Trinta empresas, em quatro grupos: indústria de Santa Catarina, fabricantes e grupos industriais com presença nacional, e distribuidores de ferramenta de corte. A faixa de presença foi observada, não estimada:
 
 - rica: CNPJ confirmado na BrasilAPI e site oficial que abriu
-- média: CNPJ confirmado, site abriu, e a cidade da CVM não é a mesma da BrasilAPI (Tupy, Portobello). O gabarito de cidade e UF usa a BrasilAPI
-- fraca: site de distribuidor regional abriu e o HTML não traz CNPJ
-- a revisar: cadastro ok e site não abriu (Intelbras, Marcopolo), ou site abriu sem CNPJ conferido (OSG, Tungaloy)
+- média: Tupy e Portobello. A faixa ficou `media` mesmo depois da troca para a matriz. Em Portobello a CVM ainda lista Florianópolis e a BrasilAPI lista Tijucas. Em Tupy, matriz e CVM coincidem em Joinville; a faixa não foi promovida nesta rodada
+- fraca: KSC Ferramentas. O site abriu e a cidade do texto é Joinville, mas nenhum CNPJ foi amarrado
+- a revisar: Intelbras e Marcopolo. O cadastro está ok e o site não abriu daqui
 
-Vinte e duas linhas têm o bloco cadastral preenchido e `gabarito_status` verificado. Oito ficam a revisar. Tupy continua a revisar porque o segmento (CNAE da Receita contra o setor da CVM) ficou vazio. LinkedIn, cargo e notícia recente estão vazios em todas. Páginas de distribuidor listam gente, e-mail e telefone; nada disso foi copiado. O cargo, se for preenchido, é o cargo público da função, sem nome de pessoa.
+Vinte e nove linhas têm o bloco cadastral da matriz e `gabarito_status` verificado. Uma fica a revisar: KSC Ferramentas. O CNPJ do gabarito é o da matriz na BrasilAPI (`descricao_identificador_matriz_filial`), não o da filial. O sufixo `/0001` não garante matriz. Três linhas trocaram de filial para matriz em 2026-11-18: Tupy (`/0003-00`, Joinville, fundição de ferro e aço), Romi (`/0014-88`, mesma cidade e CNAE) e Randoncorp (`/0011-98`, CNAE de holding). LinkedIn da empresa entrou em Kennatech, Repatri e BFT, só com URL `/company/`. O cargo entrou só na Kennatech, como “Diretor Técnico e Comercial”, sem nome de pessoa. Notícia recente continua vazia. Páginas de distribuidor que listavam gente, e-mail e telefone não foram copiadas.
 
 As dez perguntas são as mesmas para toda ferramenta: CNPJ, razão social, cidade, UF, porte, segmento, site, LinkedIn da empresa, cargo do decisor comercial, notícia recente. O runner recebe o nome e essas perguntas. Não recebe CNPJ, site nem cidade.
 
@@ -61,7 +61,7 @@ Cada ferramenta faz busca e extrato com o próprio par de endpoints, todos na AP
 
 O baseline se abstém nesta prova. Dar a ele o site oficial seria entregar a resposta. Uma coluna futura `url_partida`, separada do gabarito, permitiria um baseline que lê uma página de partida sem ver o esperado.
 
-`porte` `DEMAIS` é o código da Receita para quem não é MEI, ME nem EPP. Todas as empresas com porte preenchido estão nessa faixa, então o campo não separa tamanho nesta amostra.
+`porte` é o texto da BrasilAPI. `DEMAIS` é quem não é MEI, ME nem empresa de pequeno porte. Nesta amostra, 28 linhas preenchidas são `DEMAIS` e a Repatri é `EMPRESA DE PEQUENO PORTE`. O campo quase não separa tamanho.
 
 ## Nota
 
@@ -92,9 +92,9 @@ Data, preço em reais e CNPJ não passam por modelo.
 - Data de notícia: ISO, dentro das 48 horas anteriores a `started_at`.
 - Data de página: a mesma data civil em `America/Sao_Paulo`, ou diferença de até 26 horas. O feed da CIMM veio com fuso `+0300`; a data foi gravada em UTC e a tolerância cobre um dia de fuso trocado. Vale revisar esse fuso.
 - Preço: a forma canônica acima.
-- CNPJ: 14 dígitos e os dois verificadores. A comparação ignora pontuação.
-- Razão social, cidade, UF e porte: igualdade sem acento e sem caixa. A cidade do gabarito está como a Receita devolve, sem acento. Se a CVM divergir no município ou na UF, vale a BrasilAPI. A divergência fica em `notas`.
-- Segmento: um texto contém o outro, depois de dobrar. A regra da BrasilAPI não escolhe o CNAE. Tupy fica sem segmento por isso.
+- CNPJ: 14 dígitos da matriz e os dois verificadores. A comparação ignora pontuação. Um CNPJ de filial com dígito verificador válido é errado. O sufixo `/0001` não prova que o estabelecimento é a matriz.
+- Razão social, cidade, UF e porte: igualdade sem acento e sem caixa. Cidade, UF, porte e segmento são os da matriz na BrasilAPI. Se a CVM divergir no município ou na UF, vale a BrasilAPI. A divergência fica em `notas`. O porte é o texto da BrasilAPI (`DEMAIS` ou `EMPRESA DE PEQUENO PORTE`).
+- Segmento: um texto contém o outro, depois de dobrar. O gabarito é o CNAE principal da matriz, não o da CVM nem o de uma filial.
 - Site: o host, sem `www`.
 - LinkedIn: só URL com `/company/`. Perfil de pessoa não conta e não é armazenado.
 
@@ -137,13 +137,13 @@ O custo por 1.000 consultas é a média do custo estimado das linhas, vezes 1.00
 
 A amostra de empresas com cadastro verificado é, em grande parte, companhia aberta. Elas têm site e CNPJ fáceis de achar. A faixa "rica" mede "o site abriu e o CNPJ confere", não autoridade de marca. Várias não repetem o CNPJ no HTML; o vínculo é o nome na CVM mais a BrasilAPI mais um site que abriu com esse nome.
 
-Tupy e Portobello: a CVM e a BrasilAPI divergem no município. O gabarito usa a BrasilAPI (Tupy em SAO PAULO/SP, Portobello em TIJUCAS/SC), conferida de novo em 2026-11-18. O segmento da Tupy continua vazio.
+O CNPJ antigo da Tupy (`/0001-49`) era filial em São Paulo. A matriz é `/0003-00`, em Joinville, e é o que está no gabarito. Portobello permanece em Tijucas, que é a matriz na BrasilAPI; a CVM ainda lista Florianópolis. KSC Ferramentas segue sem CNPJ: dois cadastros ativos em Joinville têm razão parecida e nenhum foi amarrado ao site.
 
-O porte não discrimina: quem está preenchido é `DEMAIS`.
+O porte quase não discrimina: 28 linhas são `DEMAIS` e uma é `EMPRESA DE PEQUENO PORTE`.
 
 A prova 1 não tem gabarito de URL. Ela mede data e duplicata, não se a matéria é a que um editor escolheria.
 
-Marketplace em 2026 é página montada no cliente. Um runner HTTP sem navegador não vê o produto. Completar as 29 URLs pede alguém abrindo a loja, ou um navegador, e mesmo assim o preço envelhece.
+Marketplace em 2026 é página montada no cliente. As 26 fichas verificadas são um snapshot de 2026-11-18; o preço envelhece. As quatro URLs da Shopee não foram lidas: a página caiu na verificação de tráfego. Falta uma quinta URL da Shopee.
 
 Context.dev não filtra notícia por Brasil. Firecrawl não aplica `tbs` na fonte de notícias. Exa usa a categoria `news`. Essas três provas 1 não são o mesmo recorte geográfico, e a diferença está no runner de propósito, porque a API não oferece o mesmo campo. Tratar isso como empate de "busca no Brasil" seria forçar.
 

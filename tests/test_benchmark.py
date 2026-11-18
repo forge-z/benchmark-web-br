@@ -35,7 +35,7 @@ class Datasets(unittest.TestCase):
         questions = read("perguntas_empresas.csv")
         self.assertEqual(len(sites), 25)
         self.assertEqual(len(queries), 40)
-        self.assertEqual(len(urls), 31)
+        self.assertEqual(len(urls), 60)
         self.assertEqual(len(companies), 30)
         self.assertEqual(len(questions), 10)
         self.assertTrue(all(row["gabarito_status"] == "verificado" for row in sites))
@@ -46,17 +46,32 @@ class Datasets(unittest.TestCase):
         products = [row for row in urls if row["tipo"] == "produto"]
         self.assertEqual(len(news), 20)
         self.assertEqual(len(pdfs), 10)
-        self.assertEqual(len(products), 1)
+        self.assertEqual(len(products), 30)
+        self.assertEqual(sum(row["gabarito_status"] == "verificado" for row in products), 26)
+        shopee = [row for row in products if row["veiculo"] == "Shopee"]
+        self.assertEqual(len(shopee), 4)
+        self.assertTrue(all(row["gabarito_status"] == "a revisar" for row in shopee))
+        self.assertTrue(all(not row["titulo_esperado"] and not row["preco_esperado"] for row in shopee))
         self.assertTrue(all(row["titulo_esperado"] and row["data_esperada"] for row in news))
-        self.assertEqual(sum(row["gabarito_status"] == "verificado" for row in companies), 22)
-        self.assertEqual(sum(row["gabarito_status"] == "a revisar" for row in companies), 8)
+        self.assertEqual(sum(row["gabarito_status"] == "verificado" for row in companies), 29)
+        self.assertEqual(sum(row["gabarito_status"] == "a revisar" for row in companies), 1)
         by_id = {row["id"]: row for row in companies}
-        self.assertEqual(by_id["e02"]["cidade"], "SAO PAULO")
-        self.assertEqual(by_id["e02"]["uf"], "SP")
-        self.assertEqual(by_id["e02"]["segmento"], "")
+        self.assertEqual(by_id["e02"]["cnpj"], "84.683.374/0003-00")
+        self.assertEqual(by_id["e02"]["cidade"], "JOINVILLE")
+        self.assertEqual(by_id["e02"]["uf"], "SC")
+        self.assertTrue(by_id["e02"]["segmento"])
+        self.assertEqual(by_id["e02"]["gabarito_status"], "verificado")
+        self.assertEqual(by_id["e12"]["cnpj"], "56.720.428/0014-88")
+        self.assertEqual(by_id["e13"]["cnpj"], "89.086.144/0011-98")
         self.assertEqual(by_id["e18"]["cidade"], "TIJUCAS")
         self.assertEqual(by_id["e18"]["uf"], "SC")
         self.assertEqual(by_id["e18"]["gabarito_status"], "verificado")
+        self.assertEqual(by_id["e25"]["gabarito_status"], "a revisar")
+        self.assertEqual(by_id["e25"]["cnpj"], "")
+        for row in companies:
+            if row["linkedin_empresa"]:
+                self.assertIn("/company/", row["linkedin_empresa"])
+                self.assertNotIn("/in/", row["linkedin_empresa"])
 
     def test_cnpj_and_privacy(self):
         blob = "\n".join((DATA / name).read_text(encoding="utf-8") for name in (
@@ -315,6 +330,13 @@ class Grading(unittest.TestCase):
         self.assertEqual(by_field["site"], "certo")
         self.assertEqual(by_field["cargo_decisor_comercial"], "errado")
         self.assertNotIn("noticia_recente", by_field)
+        filial = {
+            "tool": "parallel", "prova": "empresas", "item_id": "e02", "dry_run": False, "skipped": False,
+            "output": {"answers": {"cnpj": {"value": "84.683.374/0001-49", "citations": []}}},
+        }
+        filial_cells = {cell["field"]: cell["grade"] for cell in grade_records([filial], DATA)}
+        self.assertEqual(filial_cells["cnpj"], "errado")
+        self.assertTrue(fields.cnpj_valid("84.683.374/0001-49"))
 
     def test_noise_ratio_sees_a_menu(self):
         from grade.grade import noise_ratio
