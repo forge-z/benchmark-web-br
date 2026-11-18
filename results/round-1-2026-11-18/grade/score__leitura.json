@@ -1,0 +1,204 @@
+{
+  "por_ferramenta": [
+    {
+      "tool": "parallel",
+      "graded": 115,
+      "certo": 64,
+      "errado": 21,
+      "branco": 30,
+      "certo_por_100": 55.7,
+      "errado_por_100": 18.3,
+      "branco_por_100": 26.1,
+      "liquido": 37.4,
+      "liquido_lo": 21.1,
+      "liquido_hi": 53.2
+    },
+    {
+      "tool": "context_dev",
+      "graded": 115,
+      "certo": 52,
+      "errado": 13,
+      "branco": 50,
+      "certo_por_100": 45.2,
+      "errado_por_100": 11.3,
+      "branco_por_100": 43.5,
+      "liquido": 33.9,
+      "liquido_lo": 17.6,
+      "liquido_hi": 50.0
+    },
+    {
+      "tool": "exa",
+      "graded": 115,
+      "certo": 58,
+      "errado": 19,
+      "branco": 38,
+      "certo_por_100": 50.4,
+      "errado_por_100": 16.5,
+      "branco_por_100": 33.0,
+      "liquido": 33.9,
+      "liquido_lo": 18.0,
+      "liquido_hi": 50.0
+    },
+    {
+      "tool": "baseline",
+      "graded": 115,
+      "certo": 46,
+      "errado": 18,
+      "branco": 51,
+      "certo_por_100": 40.0,
+      "errado_por_100": 15.7,
+      "branco_por_100": 44.3,
+      "liquido": 24.3,
+      "liquido_lo": 8.8,
+      "liquido_hi": 40.4
+    },
+    {
+      "tool": "firecrawl",
+      "graded": 115,
+      "certo": 47,
+      "errado": 22,
+      "branco": 46,
+      "certo_por_100": 40.9,
+      "errado_por_100": 19.1,
+      "branco_por_100": 40.0,
+      "liquido": 21.7,
+      "liquido_lo": 7.6,
+      "liquido_hi": 36.5
+    },
+    {
+      "tool": "tinyfish",
+      "graded": 115,
+      "certo": 29,
+      "errado": 13,
+      "branco": 73,
+      "certo_por_100": 25.2,
+      "errado_por_100": 11.3,
+      "branco_por_100": 63.5,
+      "liquido": 13.9,
+      "liquido_lo": 3.5,
+      "liquido_hi": 23.7
+    }
+  ],
+  "pares": [
+    {
+      "primeiro": "baseline",
+      "segundo": "context_dev",
+      "diferenca": 9.6,
+      "lo": 3.5,
+      "hi": 16.2,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "baseline",
+      "segundo": "exa",
+      "diferenca": 9.6,
+      "lo": -1.8,
+      "hi": 20.7,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "baseline",
+      "segundo": "firecrawl",
+      "diferenca": -2.6,
+      "lo": -15.9,
+      "hi": 10.2,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "baseline",
+      "segundo": "parallel",
+      "diferenca": 13.0,
+      "lo": 1.7,
+      "hi": 23.9,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "baseline",
+      "segundo": "tinyfish",
+      "diferenca": -10.4,
+      "lo": -23.1,
+      "hi": 1.6,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "context_dev",
+      "segundo": "exa",
+      "diferenca": 0.0,
+      "lo": -10.3,
+      "hi": 10.3,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "context_dev",
+      "segundo": "firecrawl",
+      "diferenca": -12.2,
+      "lo": -25.9,
+      "hi": 0.0,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "context_dev",
+      "segundo": "parallel",
+      "diferenca": 3.5,
+      "lo": -7.2,
+      "hi": 13.5,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "context_dev",
+      "segundo": "tinyfish",
+      "diferenca": -20.0,
+      "lo": -31.4,
+      "hi": -8.9,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "exa",
+      "segundo": "firecrawl",
+      "diferenca": -12.2,
+      "lo": -20.5,
+      "hi": -4.1,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "exa",
+      "segundo": "parallel",
+      "diferenca": 3.5,
+      "lo": -2.7,
+      "hi": 9.9,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "exa",
+      "segundo": "tinyfish",
+      "diferenca": -20.0,
+      "lo": -31.2,
+      "hi": -8.6,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "firecrawl",
+      "segundo": "parallel",
+      "diferenca": 15.7,
+      "lo": 6.4,
+      "hi": 24.8,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "firecrawl",
+      "segundo": "tinyfish",
+      "diferenca": -7.8,
+      "lo": -18.9,
+      "hi": 4.8,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "parallel",
+      "segundo": "tinyfish",
+      "diferenca": -23.5,
+      "lo": -34.8,
+      "hi": -12.1,
+      "longe_de_zero": true
+    }
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "por_ferramenta": [
+    {
+      "tool": "context_dev",
+      "graded": 400,
+      "certo": 400,
+      "errado": 0,
+      "branco": 0,
+      "certo_por_100": 100.0,
+      "errado_por_100": 0.0,
+      "branco_por_100": 0.0,
+      "liquido": 100.0,
+      "liquido_lo": 100.0,
+      "liquido_hi": 100.0
+    },
+    {
+      "tool": "exa",
+      "graded": 400,
+      "certo": 400,
+      "errado": 0,
+      "branco": 0,
+      "certo_por_100": 100.0,
+      "errado_por_100": 0.0,
+      "branco_por_100": 0.0,
+      "liquido": 100.0,
+      "liquido_lo": 100.0,
+      "liquido_hi": 100.0
+    },
+    {
+      "tool": "baseline",
+      "graded": 252,
+      "certo": 248,
+      "errado": 0,
+      "branco": 4,
+      "certo_por_100": 98.4,
+      "errado_por_100": 0.0,
+      "branco_por_100": 1.6,
+      "liquido": 98.4,
+      "liquido_lo": 96.4,
+      "liquido_hi": 99.7
+    },
+    {
+      "tool": "firecrawl",
+      "graded": 400,
+      "certo": 0,
+      "errado": 0,
+      "branco": 400,
+      "certo_por_100": 0.0,
+      "errado_por_100": 0.0,
+      "branco_por_100": 100.0,
+      "liquido": 0.0,
+      "liquido_lo": 0.0,
+      "liquido_hi": 0.0
+    },
+    {
+      "tool": "tinyfish",
+      "graded": 53,
+      "certo": 0,
+      "errado": 24,
+      "branco": 29,
+      "certo_por_100": 0.0,
+      "errado_por_100": 45.3,
+      "branco_por_100": 54.7,
+      "liquido": -45.3,
+      "liquido_lo": -63.4,
+      "liquido_hi": -22.7
+    },
+    {
+      "tool": "parallel",
+      "graded": 400,
+      "certo": 83,
+      "errado": 266,
+      "branco": 51,
+      "certo_por_100": 20.8,
+      "errado_por_100": 66.5,
+      "branco_por_100": 12.8,
+      "liquido": -45.8,
+      "liquido_lo": -60.0,
+      "liquido_hi": -29.8
+    }
+  ],
+  "pares": [
+    {
+      "primeiro": "baseline",
+      "segundo": "context_dev",
+      "diferenca": 1.6,
+      "lo": 0.3,
+      "hi": 3.5,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "baseline",
+      "segundo": "exa",
+      "diferenca": 1.6,
+      "lo": 0.3,
+      "hi": 3.5,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "baseline",
+      "segundo": "firecrawl",
+      "diferenca": -98.4,
+      "lo": -99.7,
+      "hi": -96.5,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "baseline",
+      "segundo": "parallel",
+      "diferenca": -144.2,
+      "lo": -158.2,
+      "hi": -127.8,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "baseline",
+      "segundo": "tinyfish",
+      "diferenca": -143.7,
+      "lo": -162.2,
+      "hi": -120.7,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "context_dev",
+      "segundo": "exa",
+      "diferenca": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "longe_de_zero": false
+    },
+    {
+      "primeiro": "context_dev",
+      "segundo": "firecrawl",
+      "diferenca": -100.0,
+      "lo": -100.0,
+      "hi": -100.0,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "context_dev",
+      "segundo": "parallel",
+      "diferenca": -145.8,
+      "lo": -160.0,
+      "hi": -129.8,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "context_dev",
+      "segundo": "tinyfish",
+      "diferenca": -145.3,
+      "lo": -163.4,
+      "hi": -122.7,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "exa",
+      "segundo": "firecrawl",
+      "diferenca": -100.0,
+      "lo": -100.0,
+      "hi": -100.0,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "exa",
+      "segundo": "parallel",
+      "diferenca": -145.8,
+      "lo": -160.0,
+      "hi": -129.8,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "exa",
+      "segundo": "tinyfish",
+      "diferenca": -145.3,
+      "lo": -163.4,
+      "hi": -122.7,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "firecrawl",
+      "segundo": "parallel",
+      "diferenca": -45.8,
+      "lo": -60.0,
+      "hi": -29.8,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "firecrawl",
+      "segundo": "tinyfish",
+      "diferenca": -45.3,
+      "lo": -63.4,
+      "hi": -22.7,
+      "longe_de_zero": true
+    },
+    {
+      "primeiro": "parallel",
+      "segundo": "tinyfish",
+      "diferenca": 0.5,
+      "lo": -29.2,
+      "hi": 32.3,
+      "longe_de_zero": false
+    }
+  ]
+}

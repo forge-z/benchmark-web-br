@@ -6,6 +6,20 @@ Scoring follows [research-agent-eval](https://github.com/itsyusufahmed/research-
 
 This is the initial skeleton. Dataset gaps are counted. No paid API call was made to build the repo.
 
+## Round 1
+
+Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, with a 95% interval. Parentheses mark a sample smaller than the dataset. Round deviations are in `METODOLOGIA.md`, section "Rodada 1" (Portuguese; there is no separate English methodology).
+
+| Tool | News | Reading | Companies |
+|---|---:|---:|---:|
+| baseline | 98.4 [96.4; 99.7] | 24.3 [8.8; 40.4] | 0.0 [0.0; 0.0] |
+| exa | 100.0 [100.0; 100.0] | 33.9 [18.0; 50.0] | 0.5 [0.0; 1.5] |
+| parallel | -45.8 [-60.0; -29.8] | 37.4 [21.1; 53.2] | 10.1 [6.3; 13.3] |
+| parallel_task_core | — | — | 87.4 [76.3; 95.2] |
+| tinyfish | -45.3 [-63.4; -22.7] | 13.9 [3.5; 23.7] | 0.5 [0.0; 1.5] |
+| firecrawl | 0.0 [0.0; 0.0] | 21.7 [7.6; 36.5] | -7.1 [-26.2; 11.9] (12/30) |
+| context_dev | 100.0 [100.0; 100.0] | 33.9 [17.6; 50.0] | 10.0 [2.4; 17.0] (24/30) |
+
 ## Why Python
 
 Python 3.11, the standard library, and one dependency: `httpx`. CSV, JSONL, HTML, XML, hashing, and the bootstrap stay in the stdlib. Every tool goes through the same HTTP client, so the request body is visible and no vendor SDK is pinned. Tests use `unittest`.
@@ -23,7 +37,7 @@ Python 3.11, the standard library, and one dependency: `httpx`. CSV, JSONL, HTML
 | `datasets/` | Sites, queries, URLs, companies. Counts in `datasets/README.md` |
 | `runners/` | One runner per tool, plus the HTTP/RSS baseline |
 | `grade/` | Deterministic grading, the rules, and the net score |
-| `results/` | Empty in git. Format in `results/SCHEMA.md` |
+| `results/` | Round 1 in `results/round-1-2026-11-18/`. Format in `results/SCHEMA.md`. Loose JSONL (`results/*.jsonl`) stays out of git |
 | `snapshots-index/` | Index only. Raw bytes are gitignored |
 
 ## Tools
@@ -60,7 +74,7 @@ python -m grade.grade --results results/exa__noticias__<run_id>.jsonl --out resu
 python -m grade.score --cells results/cells.jsonl
 ```
 
-Result JSONL and `snapshots/` stay out of git. Each call records an estimated credit count and list-price cost. See `runners/costs.py`. An estimate is not an invoice.
+Loose JSONL in `results/*.jsonl` and `snapshots/` stay out of git. Round 1, with third-party text already removed, is in `results/round-1-2026-11-18/`. Each call records an estimated credit count and list-price cost. See `runners/costs.py`. An estimate is not an invoice.
 
 ## Dataset counts (checked 2026-11-18)
 

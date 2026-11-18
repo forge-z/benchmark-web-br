@@ -359,5 +359,21 @@ class Grading(unittest.TestCase):
         self.assertEqual(low, net(cells))
 
 
+
+class ContextDevPageMeta(unittest.TestCase):
+    def test_title_and_date_from_scrape_metadata(self):
+        from runners import context_dev
+        payload = {"markdown": {"data": "texto"}, "metadata": {"title": "Título", "publishedTime": "2026-11-18T10:15:56-03:00"}}
+        self.assertEqual(context_dev._page_meta(payload), ("Título", "2026-11-18T13:15:56Z"))
+
+    def test_falls_back_to_open_graph_and_json_ld(self):
+        from runners import context_dev
+        payload = {"metadata": {"openGraph": {"title": "OG"}, "jsonLd": [{"@graph": [{"datePublished": "2026-11-17T08:00:00Z"}]}]}}
+        self.assertEqual(context_dev._page_meta(payload), ("OG", "2026-11-17T08:00:00Z"))
+
+    def test_missing_metadata_is_blank(self):
+        from runners import context_dev
+        self.assertEqual(context_dev._page_meta({"metadata": {}}), ("", ""))
+
 if __name__ == "__main__":
     unittest.main()

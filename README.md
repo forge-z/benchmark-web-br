@@ -6,6 +6,20 @@ A nota segue o desenho de [research-agent-eval](https://github.com/itsyusufahmed
 
 Isto é a estrutura inicial. Os datasets têm lacunas contadas. Nenhuma chamada paga foi feita para montar o repositório.
 
+## Rodada 1
+
+Números de 2026-11-18 em [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/RESUMO.md). Líquido = certo − errado por 100 células, intervalo de 95%. Entre parênteses, amostra menor que o dataset.
+
+| Ferramenta | Notícias | Leitura | Empresas |
+|---|---:|---:|---:|
+| baseline | 98,4 [96,4; 99,7] | 24,3 [8,8; 40,4] | 0,0 [0,0; 0,0] |
+| exa | 100,0 [100,0; 100,0] | 33,9 [18,0; 50,0] | 0,5 [0,0; 1,5] |
+| parallel | -45,8 [-60,0; -29,8] | 37,4 [21,1; 53,2] | 10,1 [6,3; 13,3] |
+| parallel_task_core | — | — | 87,4 [76,3; 95,2] |
+| tinyfish | -45,3 [-63,4; -22,7] | 13,9 [3,5; 23,7] | 0,5 [0,0; 1,5] |
+| firecrawl | 0,0 [0,0; 0,0] | 21,7 [7,6; 36,5] | -7,1 [-26,2; 11,9] (12/30) |
+| context_dev | 100,0 [100,0; 100,0] | 33,9 [17,6; 50,0] | 10,0 [2,4; 17,0] (24/30) |
+
 ## Por que Python
 
 Python 3.11, com a biblioteca padrão e uma dependência: `httpx`. CSV, JSONL, HTML, XML, hash e o bootstrap cabem na stdlib. `httpx` é o único cliente HTTP, então o corpo do pedido de cada ferramenta fica visível no runner, sem SDK de fornecedor. Os testes usam `unittest`.
@@ -23,7 +37,7 @@ Python 3.11, com a biblioteca padrão e uma dependência: `httpx`. CSV, JSONL, H
 | `datasets/` | Sites, consultas, URLs e empresas. Ver a contagem em `datasets/README.md` |
 | `runners/` | Um runner por ferramenta, mais o baseline HTTP/RSS |
 | `grade/` | Correção determinística, regras e o líquido |
-| `results/` | Vazio no git. O formato está em `results/SCHEMA.md` |
+| `results/` | Rodada 1 em `results/round-1-2026-11-18/`. O formato está em `results/SCHEMA.md`. JSONL solto (`results/*.jsonl`) continua fora do git |
 | `snapshots-index/` | Só o índice. Bytes crus ficam fora do git |
 | `METODOLOGIA.md` | O que é medido, como, e o que não dá para concluir |
 
@@ -75,7 +89,7 @@ python -m grade.amostra --cells results/cells.jsonl --out results/amostra.csv --
 
 A correção não chama modelo. `grade/amostra.py` sorteia uma amostra reprodutível para revisão humana. Sem `--cells`, sorteia as linhas dos datasets.
 
-O JSONL de resultado e o corpo em `snapshots/` ficam de fora do git. Custo e crédito estimados estão em cada chamada, com a fonte da tabela em `runners/costs.py`. Estimativa de lista não é fatura.
+O JSONL solto em `results/*.jsonl` e o corpo em `snapshots/` ficam de fora do git. A rodada 1, já sem o texto de terceiro, está em `results/round-1-2026-11-18/`. Custo e crédito estimados estão em cada chamada, com a fonte da tabela em `runners/costs.py`. Estimativa de lista não é fatura.
 
 ## Contagem dos datasets (2026-11-18)
 
