@@ -1,5 +1,7 @@
 # Metodologia
 
+English version: [METHODOLOGY.md](METHODOLOGY.md).
+
 O que este benchmark mede, como mede, e o que uma rodada não autoriza a concluir. As regras de certo, errado e branco estão em `grade/grading_rules.md`. Este arquivo é o desenho; aquele é o gabarito operacional.
 
 A inspiração é o [research-agent-eval](https://github.com/itsyusufahmed/research-agent-eval). De lá veio a forma da nota: três desfechos, líquido = certo − errado, intervalo por bootstrap, regras publicadas antes da rodada. As provas, os datasets e o texto das regras são deste repositório.

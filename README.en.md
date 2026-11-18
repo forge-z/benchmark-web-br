@@ -2,13 +2,13 @@
 
 Public comparison of web tools on Brazilian sites. Three tasks, the same input, the same output schema, no per-tool prompt tuning.
 
-Scoring follows [research-agent-eval](https://github.com/itsyusufahmed/research-agent-eval): each fact is right, wrong, or blank, and the net is right minus wrong. The 95% interval is a bootstrap over items. Rules are in `grade/grading_rules.md`. The long write-up is `METODOLOGIA.md` (Portuguese).
+Scoring follows [research-agent-eval](https://github.com/itsyusufahmed/research-agent-eval): each fact is right, wrong, or blank, and the net is right minus wrong. The 95% interval is a bootstrap over items. Rules are in `grade/grading_rules.md`. The long write-up is `METHODOLOGY.md`.
 
 This is the initial skeleton. Dataset gaps are counted. No paid API call was made to build the repo.
 
 ## Round 1
 
-Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, in points from −100 to 100, with a 95% interval. Parentheses mark a sample smaller than the dataset. Round deviations are in `METODOLOGIA.md`, section "Rodada 1" (Portuguese; there is no separate English methodology).
+Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, in points from −100 to 100, with a 95% interval. Parentheses mark a sample smaller than the dataset. Round deviations are in `METHODOLOGY.md`, section "Round 1".
 
 | Tool | News | Reading | Companies |
 |---|---:|---:|---:|
@@ -48,6 +48,7 @@ Python 3.11, the standard library, and one dependency: `httpx`. CSV, JSONL, HTML
 | `grade/` | Deterministic grading, the rules, and the net score |
 | `results/` | Round 1 in `results/round-1-2026-11-18/`. Format in `results/SCHEMA.md`. Loose JSONL (`results/*.jsonl`) stays out of git |
 | `snapshots-index/` | Index only. Raw bytes are gitignored |
+| `METHODOLOGY.md` | What is measured, how, and what a round does not support |
 
 ## Tools
 
