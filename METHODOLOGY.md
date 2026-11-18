@@ -151,7 +151,7 @@ Context.dev does not filter news by Brazil. Firecrawl does not apply `tbs` on th
 
 The CIMM `+0300` timezone may be a CMS error. The date was converted to UTC, and the one-day tolerance absorbs the case on task 2. It does not absorb a story on the edge of the 48-hour window.
 
-No paid call was made. The runners were exercised with `--dry-run`. The request schema can fail live (a 422, for example), and that shows up only with credit.
+Before round 1, no paid call was made. The runners were exercised with `--dry-run`. The request schema can fail live (a 422, for example), and that shows up only with credit. In round 1, Exa, TinyFish, and Parallel ran on paid accounts; Firecrawl and Context.dev used a free plan.
 
 ## How to reproduce a round
 
@@ -173,7 +173,7 @@ Results are in `results/round-1-2026-11-18/`. What this round did differently fr
 
 1. **Calls through Executor.** The tools were called through a tool gateway (Executor), not through `httpx` directly. The runners ran unchanged: a local adapter swapped `common.request_json` for the equivalent tool's response on the gateway, with the same request body. Latency includes the gateway overhead. On Task core, latency is from creation to the end of the run.
 2. **Firecrawl.** The gateway requires `formats` and `sources` as objects (`[{"type": "markdown"}]`, `[{"type": "web"}]`) instead of strings. `tbs` stayed at the top of the request. The request content is the same as the runner's.
-3. **Samples under a credit cap.** Each tool could spend at most about 60% of the free balance. That is why the companies task ran on a sample for Firecrawl (e01–e12, 12 of 30) and Context.dev (e01–e24, 24 of 30). The other tasks are complete.
+3. **Samples under a credit cap.** The cap of about 60% of the free balance applied to Firecrawl and Context.dev. That is why the companies task ran on a sample for Firecrawl (e01–e12, 12 of 30) and Context.dev (e01–e24, 24 of 30). Their other tasks are complete. Exa, TinyFish, and Parallel (including Task) ran on paid accounts.
 4. **Context.dev free-plan limits.** 2 concurrent requests and 10 per minute. Calls were made in batches of up to 9 per minute.
 5. **Exa.** The first run used the Exa MCP, without `category: news` and without a date filter, and was discarded. The three tasks were redone through the API (`/search` and `/contents`) with the runner's exact body. Summed `costDollars`: US$ 0.631.
 6. **Parallel Task core** ran only on the companies task, as a reference column.

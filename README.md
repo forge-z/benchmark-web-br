@@ -8,7 +8,7 @@ Isto é a estrutura inicial. Os datasets têm lacunas contadas. Nenhuma chamada 
 
 ## Rodada 1
 
-Números de 2026-11-18 em [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/RESUMO.md). Líquido = certo − errado por 100 células, em pontos de −100 a 100, com intervalo de 95%. Entre parênteses, amostra menor que o dataset.
+Números de 2026-11-18 em [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/RESUMO.md). Líquido = certo − errado por 100 células, em pontos de −100 a 100, com intervalo de 95%. Entre parênteses, amostra menor que o dataset. Exa, TinyFish e Parallel (incluindo o Task) rodaram em conta paga. Firecrawl e Context.dev usaram crédito de plano grátis.
 
 | Ferramenta | Notícias | Leitura | Empresas |
 |---|---:|---:|---:|
@@ -120,7 +120,7 @@ LinkedIn da empresa entrou em três linhas, só com URL `/company/`. O cargo ent
 
 1. A busca de notícias da Context.dev não tem país `br`. O filtro é idioma `pt` mais a data, então Portugal entra.
 2. O `tbs` da Firecrawl não filtra a fonte `news`. A prova 1 usa a fonte `web` com `tbs`.
-3. Exa está em `type: auto` (teto de US$ 7 / 1.000). `lite` é mais barato e pode caber melhor em crédito grátis.
+3. Exa está em `type: auto` (teto de US$ 7 / 1.000). `lite` é mais barato e reduz o custo.
 4. O painel de 25 sites não restringe o domínio da busca. Cobertura do painel ainda não é nota.
 5. O baseline da prova 3 se abstém. Ele não recebe o site oficial, senão a resposta vazaria. Dá para criar depois uma coluna `url_partida`, separada do gabarito.
 6. Duplicata de URL é métrica, não entra no líquido. Consulta com mais itens pesa mais do que consulta com um item.

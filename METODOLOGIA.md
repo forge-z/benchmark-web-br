@@ -151,7 +151,7 @@ Context.dev não filtra notícia por Brasil. Firecrawl não aplica `tbs` na font
 
 O fuso `+0300` da CIMM pode ser erro do CMS. A data foi convertida para UTC e a tolerância de um dia absorve o caso na prova 2. Não absorve uma matéria no limite da janela de 48 horas.
 
-Nenhuma chamada paga foi feita. Os runners foram exercitados em `--dry-run`. O schema do pedido pode falhar ao vivo (um 422, por exemplo) e isso só aparece com crédito.
+Antes da rodada 1, nenhuma chamada paga foi feita. Os runners foram exercitados em `--dry-run`. O schema do pedido pode falhar ao vivo (um 422, por exemplo) e isso só aparece com crédito. Na rodada 1, Exa, TinyFish e Parallel rodaram em conta paga; Firecrawl e Context.dev usaram plano grátis.
 
 ## Como reproduzir uma rodada
 
@@ -173,7 +173,7 @@ Resultados em `results/round-1-2026-11-18/`. O que esta rodada fez diferente do 
 
 1. **Chamadas pelo Executor.** As ferramentas foram chamadas por um gateway de ferramentas (Executor), não por `httpx` direto. Os runners rodaram sem alteração: um adaptador local trocou `common.request_json` pela resposta da ferramenta equivalente no gateway, com o mesmo corpo de pedido. A latência inclui o overhead do gateway. No Task core, a latência é da criação ao fim do run.
 2. **Firecrawl.** O gateway exige `formats` e `sources` como objetos (`[{"type": "markdown"}]`, `[{"type": "web"}]`) em vez de strings. O `tbs` ficou no topo do pedido. O conteúdo do pedido é o mesmo do runner.
-3. **Amostras por teto de crédito.** Cada ferramenta podia gastar no máximo cerca de 60% do saldo grátis. Por isso a prova de empresas rodou em amostra na Firecrawl (e01–e12, 12 de 30) e na Context.dev (e01–e24, 24 de 30). As outras provas estão completas.
+3. **Amostras por teto de crédito.** O teto de cerca de 60% do saldo grátis valia para a Firecrawl e a Context.dev. Por isso a prova de empresas rodou em amostra na Firecrawl (e01–e12, 12 de 30) e na Context.dev (e01–e24, 24 de 30). As outras provas dessas duas estão completas. Exa, TinyFish e Parallel (incluindo o Task) rodaram em conta paga.
 4. **Limites do plano grátis da Context.dev.** 2 pedidos simultâneos e 10 por minuto. As chamadas foram feitas em lotes de até 9 por minuto.
 5. **Exa.** A primeira execução usou o MCP da Exa, sem `category: news` nem filtro de data, e foi descartada. As três provas foram refeitas pela API (`/search` e `/contents`) com o corpo exato do runner. Custo somado do `costDollars`: US$ 0,631.
 6. **Parallel Task core** rodou só na prova de empresas, como coluna de referência.

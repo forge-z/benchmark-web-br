@@ -8,7 +8,7 @@ This is the initial skeleton. Dataset gaps are counted. No paid API call was mad
 
 ## Round 1
 
-Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, in points from −100 to 100, with a 95% interval. Parentheses mark a sample smaller than the dataset. Round deviations are in `METHODOLOGY.md`, section "Round 1".
+Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, in points from −100 to 100, with a 95% interval. Parentheses mark a sample smaller than the dataset. Exa, TinyFish, and Parallel (including Task) ran on paid accounts. Firecrawl and Context.dev used free-plan credit. Round deviations are in `METHODOLOGY.md`, section "Round 1".
 
 | Tool | News | Reading | Companies |
 |---|---:|---:|---:|
@@ -106,7 +106,7 @@ Scoring is automatic only. There is no LLM judge. `python -m grade.amostra` draw
 
 1. Context.dev news search has no `br` country. The filter is Portuguese plus the date, so Portugal is in scope.
 2. Firecrawl `tbs` does not filter the `news` source. Task 1 uses `web` plus `tbs`.
-3. Exa uses `type: auto` (US$ 7 / 1,000 ceiling). `lite` is cheaper.
+3. Exa uses `type: auto` (US$ 7 / 1,000 ceiling). `lite` is cheaper and lowers the cost.
 4. The 25-site panel does not restrict the search domain. Panel coverage is not a score yet.
 5. The task-3 baseline abstains. It is not given the official site, because that would leak the answer.
 6. Duplicate URLs are a separate metric, not part of the net. A query with more items weighs more than a query with one.
