@@ -2,13 +2,13 @@
 
 Public comparison of web tools on Brazilian sites. Three tasks, the same input, the same output schema, no per-tool prompt tuning.
 
-Scoring follows [research-agent-eval](https://github.com/itsyusufahmed/research-agent-eval): each fact is right, wrong, or blank, and the net is right minus wrong. The 95% interval is a bootstrap over items. Rules are in `grade/grading_rules.md`. The long write-up is `METODOLOGIA.md` (Portuguese).
+Scoring follows [research-agent-eval](https://github.com/itsyusufahmed/research-agent-eval): each fact is right, wrong, or blank, and the net is right minus wrong. The 95% interval is a bootstrap over items. Rules are in `grade/grading_rules.md`. The long write-up is `METHODOLOGY.md`.
 
 This is the initial skeleton. Dataset gaps are counted. No paid API call was made to build the repo.
 
 ## Round 1
 
-Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, with a 95% interval. Parentheses mark a sample smaller than the dataset. Round deviations are in `METODOLOGIA.md`, section "Rodada 1" (Portuguese; there is no separate English methodology).
+Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-2026-11-18/SUMMARY.md). Net = right − wrong per 100 cells, in points from −100 to 100, with a 95% interval. Parentheses mark a sample smaller than the dataset. Exa, TinyFish, and Parallel (including Task) ran on paid accounts. Firecrawl and Context.dev used free-plan credit. Round deviations are in `METHODOLOGY.md`, section "Round 1".
 
 | Tool | News | Reading | Companies |
 |---|---:|---:|---:|
@@ -19,6 +19,15 @@ Scores from 2026-11-18 are in [`results/round-1-2026-11-18/`](results/round-1-20
 | tinyfish | -45.3 [-63.4; -22.7] | 13.9 [3.5; 23.7] | 0.5 [0.0; 1.5] |
 | firecrawl | 0.0 [0.0; 0.0] | 21.7 [7.6; 36.5] | -7.1 [-26.2; 11.9] (12/30) |
 | context_dev | 100.0 [100.0; 100.0] | 33.9 [17.6; 50.0] | 10.0 [2.4; 17.0] (24/30) |
+
+### Caveats
+
+1. Unequal samples in the Companies column. Firecrawl ran 12 of 30 and Context.dev ran 24 of 30. Those two nets are not directly comparable to tools that ran all 30. News (40 queries) and reading (60 URLs) have one row per item.
+2. The net is in points, not a percentage. It is the percent right minus the percent wrong, on a scale from −100 to 100.
+3. One round, no repeats: 40 queries, 60 URLs, 30 companies. A gap of a few points can be noise.
+4. Each tool ran through a runner in this repo, not necessarily in the vendor's best setup. The number measures tool plus runner. Exa reached 100 on news with the full API (`/search` and `/contents`, with `category: news` and the date window); the earlier run was discarded. Context.dev reading went from −1.7 to 33.9 after the runner was fixed, with no new calls.
+5. Parallel Task is a research agent, with a median of 2.4 minutes per company. It is not comparable to the search and extraction tools, which finish in seconds. That is why the row is separate.
+6. Low-cost next step: finish the 18 missing Firecrawl companies and the 6 missing Context.dev companies when there is credit.
 
 ## Why Python
 
@@ -39,6 +48,7 @@ Python 3.11, the standard library, and one dependency: `httpx`. CSV, JSONL, HTML
 | `grade/` | Deterministic grading, the rules, and the net score |
 | `results/` | Round 1 in `results/round-1-2026-11-18/`. Format in `results/SCHEMA.md`. Loose JSONL (`results/*.jsonl`) stays out of git |
 | `snapshots-index/` | Index only. Raw bytes are gitignored |
+| `METHODOLOGY.md` | What is measured, how, and what a round does not support |
 
 ## Tools
 
@@ -96,7 +106,7 @@ Scoring is automatic only. There is no LLM judge. `python -m grade.amostra` draw
 
 1. Context.dev news search has no `br` country. The filter is Portuguese plus the date, so Portugal is in scope.
 2. Firecrawl `tbs` does not filter the `news` source. Task 1 uses `web` plus `tbs`.
-3. Exa uses `type: auto` (US$ 7 / 1,000 ceiling). `lite` is cheaper.
+3. Exa uses `type: auto` (US$ 7 / 1,000 ceiling). `lite` is cheaper and lowers the cost.
 4. The 25-site panel does not restrict the search domain. Panel coverage is not a score yet.
 5. The task-3 baseline abstains. It is not given the official site, because that would leak the answer.
 6. Duplicate URLs are a separate metric, not part of the net. A query with more items weighs more than a query with one.

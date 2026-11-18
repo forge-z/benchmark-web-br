@@ -1,5 +1,7 @@
 # Metodologia
 
+English version: [METHODOLOGY.md](METHODOLOGY.md).
+
 O que este benchmark mede, como mede, e o que uma rodada não autoriza a concluir. As regras de certo, errado e branco estão em `grade/grading_rules.md`. Este arquivo é o desenho; aquele é o gabarito operacional.
 
 A inspiração é o [research-agent-eval](https://github.com/itsyusufahmed/research-agent-eval). De lá veio a forma da nota: três desfechos, líquido = certo − errado, intervalo por bootstrap, regras publicadas antes da rodada. As provas, os datasets e o texto das regras são deste repositório.
@@ -149,7 +151,7 @@ Context.dev não filtra notícia por Brasil. Firecrawl não aplica `tbs` na font
 
 O fuso `+0300` da CIMM pode ser erro do CMS. A data foi convertida para UTC e a tolerância de um dia absorve o caso na prova 2. Não absorve uma matéria no limite da janela de 48 horas.
 
-Nenhuma chamada paga foi feita. Os runners foram exercitados em `--dry-run`. O schema do pedido pode falhar ao vivo (um 422, por exemplo) e isso só aparece com crédito.
+Antes da rodada 1, nenhuma chamada paga foi feita. Os runners foram exercitados em `--dry-run`. O schema do pedido pode falhar ao vivo (um 422, por exemplo) e isso só aparece com crédito. Na rodada 1, Exa, TinyFish e Parallel rodaram em conta paga; Firecrawl e Context.dev usaram plano grátis.
 
 ## Como reproduzir uma rodada
 
@@ -171,10 +173,21 @@ Resultados em `results/round-1-2026-11-18/`. O que esta rodada fez diferente do 
 
 1. **Chamadas pelo Executor.** As ferramentas foram chamadas por um gateway de ferramentas (Executor), não por `httpx` direto. Os runners rodaram sem alteração: um adaptador local trocou `common.request_json` pela resposta da ferramenta equivalente no gateway, com o mesmo corpo de pedido. A latência inclui o overhead do gateway. No Task core, a latência é da criação ao fim do run.
 2. **Firecrawl.** O gateway exige `formats` e `sources` como objetos (`[{"type": "markdown"}]`, `[{"type": "web"}]`) em vez de strings. O `tbs` ficou no topo do pedido. O conteúdo do pedido é o mesmo do runner.
-3. **Amostras por teto de crédito.** Cada ferramenta podia gastar no máximo cerca de 60% do saldo grátis. Por isso a prova de empresas rodou em amostra na Firecrawl (e01–e12, 12 de 30) e na Context.dev (e01–e24, 24 de 30). As outras provas estão completas.
+3. **Amostras por teto de crédito.** O teto de cerca de 60% do saldo grátis valia para a Firecrawl e a Context.dev. Por isso a prova de empresas rodou em amostra na Firecrawl (e01–e12, 12 de 30) e na Context.dev (e01–e24, 24 de 30). As outras provas dessas duas estão completas. Exa, TinyFish e Parallel (incluindo o Task) rodaram em conta paga.
 4. **Limites do plano grátis da Context.dev.** 2 pedidos simultâneos e 10 por minuto. As chamadas foram feitas em lotes de até 9 por minuto.
 5. **Exa.** A primeira execução usou o MCP da Exa, sem `category: news` nem filtro de data, e foi descartada. As três provas foram refeitas pela API (`/search` e `/contents`) com o corpo exato do runner. Custo somado do `costDollars`: US$ 0,631.
 6. **Parallel Task core** rodou só na prova de empresas, como coluna de referência.
 7. **Cobrança duplicada possível.** Alguns programas do gateway caíram por timeout de transporte, e as chamadas sem resposta foram refeitas. Elas podem ter sido cobradas duas vezes. O saldo lido antes e depois está na tabela de custo do PR, e a estimativa por item não inclui essas repetições.
 8. **Context.dev leitura.** O runner passou a ler título e data do `metadata` do scrape (com fallback em openGraph e JSON-LD `datePublished`). As 60 respostas já coletadas foram reprocessadas sem novas chamadas. O líquido foi de −1,7 para 33,9.
 9. **Notícias.** A janela de 48 h dos pedidos foi fixada na primeira execução de cada ferramenta. A correção usa o `started_at` de cada item; a diferença entre os dois é menor que 1 hora.
+
+### Ressalvas
+
+Como ler a tabela em `results/round-1-2026-11-18/`:
+
+1. **Amostras desiguais.** Na prova de empresas, a Firecrawl tem 12 linhas (e01–e12) e a Context.dev tem 24 (e01–e24). O líquido dessas duas não é comparável direto ao das ferramentas com as 30. Notícias (40 consultas) e leitura (60 URLs) têm uma linha por item.
+2. **O líquido é em pontos.** A conta é a % de certos menos a % de errados, de −100 a 100: `100 × (certos − errados) / (certos + errados + brancos)`. Não é uma porcentagem.
+3. **Uma rodada, sem repetição.** São 40 consultas, 60 URLs e 30 empresas. Diferença de poucos pontos pode ser ruído.
+4. **Ferramenta mais runner.** Cada ferramenta rodou por um runner deste repositório, não necessariamente na melhor configuração do fornecedor. O número mede os dois juntos. A Exa chegou a 100 em notícias na execução pela API completa (item 5: `/search` e `/contents`, com `category: news` e a janela de data). A leitura da Context.dev subiu de −1,7 para 33,9 depois de corrigir o runner (item 8), nas mesmas 60 respostas, sem chamada nova.
+5. **Parallel Task à parte.** É um agente de pesquisa. A mediana foi 2,4 min por empresa (142800 ms na tabela de latência). Busca e extração ficam em segundos. A linha fica separada porque o tempo e o tipo de chamada são outros.
+6. **Próximo passo barato.** Quando houver crédito, completar as 18 empresas que faltam na Firecrawl (e13–e30) e as 6 da Context.dev (e25–e30).
