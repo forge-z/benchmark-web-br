@@ -32,10 +32,10 @@ Python 3.11, the standard library, and one dependency: `httpx`. CSV, JSONL, HTML
 |---|---|---|
 | `baseline` | none | page GET, and RSS when the dataset has a feed |
 | `exa` | `EXA_API_KEY` | `POST /search`, `POST /contents` |
-| `parallel` | `PARALLEL_API_KEY` | `POST /v1beta/search`, `POST /v1beta/extract` |
+| `parallel` | `PARALLEL_API_KEY` | `POST /v1/search`, `POST /v1/extract` |
 | `parallel_task_core` | `PARALLEL_API_KEY` | `POST /v1/tasks/runs` with processor `core`, task 3 only |
 | `tinyfish` | `TINYFISH_API_KEY` | search GET and fetch POST |
-| `firecrawl` | `FIRECRAWL_API_KEY` | `/v2/search`, `/v2/scrape`, `/v2/extract` |
+| `firecrawl` | `FIRECRAWL_API_KEY` | `/v2/search`, `/v2/scrape` (markdown for pages, JSON for task 3) |
 | `context_dev` | `CONTEXT_DEV_API_KEY` | news search, web search, company search, scrape |
 
 A missing key writes `skipped` and does not open a socket. No Firecrawl Agent, Parallel FindAll, or TinyFish automation/research.
@@ -71,26 +71,24 @@ Result JSONL and `snapshots/` stay out of git. Each call records an estimated cr
 | Page read, news | 20 | 20 | 20 with title and date | 0 |
 | Page read, Anfavea PDF | 10 | 10 | 10 URLs opened | field keys open; 4 have a title that was read |
 | Page read, product | 30 | 1 | the Kabum URL opened | 29 product URLs are missing |
-| Companies | ~30 | 30 | 21 with a cadastral block | 9 |
+| Companies | ~30 | 30 | 22 with a cadastral block | 8 |
 | Questions | ~10 | 10 | 10 question strings | 0 |
 
-Company LinkedIn, the commercial role, and recent news are empty on every row. Presence bands: 19 rich, 2 medium, 5 thin, 4 still open.
+Company LinkedIn, the commercial role, and recent news are empty on every row. Presence bands: 19 rich, 2 medium, 5 thin, 4 still open. When the CVM city disagrees with BrasilAPI, the answer key uses BrasilAPI: Tupy is SAO PAULO/SP and Portobello is TIJUCAS/SC.
+
+Scoring is automatic only. There is no LLM judge. `python -m grade.amostra` draws a reproducible sample (`--seed`, default `20261118`) and writes a CSV with empty `revisao_humana` and `comentario` columns.
 
 ## Open decisions
 
-1. Parallel's current docs point new integrations at `/v1`. Search and extract here stay on `/v1beta`, with `max_chars_total` inside `excerpts`.
-2. Firecrawl `/v2/extract` is removed on 2026-12-10. The replacement is JSON scrape, which costs more credits.
-3. Context.dev news search has no `br` country. The filter is Portuguese plus the date, so Portugal is in scope.
-4. Firecrawl `tbs` does not filter the `news` source. Task 1 uses `web` plus `tbs`.
-5. Exa uses `type: auto` (US$ 7 / 1,000 ceiling). `lite` is cheaper.
-6. Parallel beta search has no separate price. The estimate uses the v1 advanced ceiling, US$ 5 / 1,000.
-7. The 25-site panel does not restrict the search domain. Panel coverage is not a score yet.
-8. The task-3 baseline abstains. It is not given the official site, because that would leak the answer.
-9. Duplicate URLs are a separate metric, not part of the net. A query with more items weighs more than a query with one.
-10. The LLM-judge hook does not send a request. Role and recent-news stay ungraded until a model is wired.
-11. 29 product URLs are missing. From this environment the marketplaces did not yield a product link, or did not open.
-12. Tupy and Portobello: the CVM city and the BrasilAPI city disagree, so city was left blank.
-13. `parallel_task_core` is a separate tool id on task 3. It can stay a reference column instead of joining the ranking.
-14. Marketplace prices move. The canonical `R$` form is defined; the price key is still empty.
+1. Context.dev news search has no `br` country. The filter is Portuguese plus the date, so Portugal is in scope.
+2. Firecrawl `tbs` does not filter the `news` source. Task 1 uses `web` plus `tbs`.
+3. Exa uses `type: auto` (US$ 7 / 1,000 ceiling). `lite` is cheaper.
+4. The 25-site panel does not restrict the search domain. Panel coverage is not a score yet.
+5. The task-3 baseline abstains. It is not given the official site, because that would leak the answer.
+6. Duplicate URLs are a separate metric, not part of the net. A query with more items weighs more than a query with one.
+7. 29 product URLs are missing. From this environment the marketplaces did not yield a product link, or did not open.
+8. Tupy's segment cell stays empty. The BrasilAPI rule covers the address, not the CNAE, and the CVM text says metalurgia.
+9. `parallel_task_core` is a separate tool id on task 3. It can stay a reference column instead of joining the ranking.
+10. Marketplace prices move. The canonical `R$` form is defined; the price key is still empty.
 
 No personal names, emails, phone numbers, or secrets are stored. A decision-maker, if filled later, is a role, not a person.

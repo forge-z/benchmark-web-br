@@ -48,8 +48,15 @@ class Datasets(unittest.TestCase):
         self.assertEqual(len(pdfs), 10)
         self.assertEqual(len(products), 1)
         self.assertTrue(all(row["titulo_esperado"] and row["data_esperada"] for row in news))
-        self.assertEqual(sum(row["gabarito_status"] == "verificado" for row in companies), 21)
-        self.assertEqual(sum(row["gabarito_status"] == "a revisar" for row in companies), 9)
+        self.assertEqual(sum(row["gabarito_status"] == "verificado" for row in companies), 22)
+        self.assertEqual(sum(row["gabarito_status"] == "a revisar" for row in companies), 8)
+        by_id = {row["id"]: row for row in companies}
+        self.assertEqual(by_id["e02"]["cidade"], "SAO PAULO")
+        self.assertEqual(by_id["e02"]["uf"], "SP")
+        self.assertEqual(by_id["e02"]["segmento"], "")
+        self.assertEqual(by_id["e18"]["cidade"], "TIJUCAS")
+        self.assertEqual(by_id["e18"]["uf"], "SC")
+        self.assertEqual(by_id["e18"]["gabarito_status"], "verificado")
 
     def test_cnpj_and_privacy(self):
         blob = "\n".join((DATA / name).read_text(encoding="utf-8") for name in (
@@ -157,6 +164,45 @@ class DryRun(unittest.TestCase):
         finally:
             common.request_json = original
 
+    def test_parallel_and_firecrawl_bodies(self):
+        import runners.firecrawl as firecrawl
+        import runners.parallel as parallel
+
+        with self._tmpdir() as out:
+            self.assertEqual(parallel.main([
+                "--prova", "noticias", "--dry-run", "--limit", "1",
+                "--out", str(out), "--datasets", str(DATA),
+            ]), 0)
+            self.assertEqual(parallel.main([
+                "--prova", "empresas", "--dry-run", "--limit", "1",
+                "--out", str(out), "--datasets", str(DATA),
+            ]), 0)
+            self.assertEqual(firecrawl.main([
+                "--prova", "empresas", "--dry-run", "--limit", "1",
+                "--out", str(out), "--datasets", str(DATA),
+            ]), 0)
+            news = json.loads(next(Path(out).glob("parallel__noticias__*.jsonl")).read_text().splitlines()[0])
+            search = news["calls"][0]
+            self.assertEqual(search["endpoint"], "https://api.parallel.ai/v1/search")
+            self.assertEqual(search["request"]["max_chars_total"], 8000)
+            self.assertNotIn("excerpts", search["request"])
+            self.assertEqual(search["request"]["advanced_settings"]["max_results"], 10)
+            task = json.loads(next(Path(out).glob("parallel_task_core__empresas__*.jsonl")).read_text().splitlines()[0])
+            schema = task["calls"][0]["request"]["task_spec"]["output_schema"]
+            self.assertEqual(schema["type"], "json")
+            self.assertIn("cnpj", schema["json_schema"]["properties"])
+            self.assertTrue(task["calls"][0]["endpoint"].endswith("/v1/tasks/runs"))
+            company = json.loads(next(Path(out).glob("firecrawl__empresas__*.jsonl")).read_text().splitlines()[0])
+            scrapes = [call for call in company["calls"] if call["call"] == "scrape_json"]
+            self.assertEqual(len(scrapes), 3)
+            self.assertTrue(all(call["endpoint"].endswith("/v2/scrape") for call in scrapes))
+            self.assertTrue(all("/extract" not in call["endpoint"] for call in company["calls"]))
+            fmt = scrapes[0]["request"]["formats"][0]
+            self.assertEqual(fmt["type"], "json")
+            self.assertIn("schema", fmt)
+            self.assertIn("prompt", fmt)
+            self.assertEqual(scrapes[0]["request"]["url"], "")
+
     def test_company_plan_does_not_carry_the_answer(self):
         import runners.exa as exa
         from runners.common import read_csv, task_text
@@ -174,6 +220,45 @@ class DryRun(unittest.TestCase):
         self.assertNotIn(row["cnpj"], body)
         self.assertNotIn("84429695000111", body)
         self.assertIn("WEG", task_text(row["nome"], perguntas))
+
+    def _tmpdir(self):
+        import tempfile
+        return tempfile.TemporaryDirectory()
+
+
+class Sample(unittest.TestCase):
+    def test_same_seed_same_csv(self):
+        from grade.amostra import main
+
+        with self._tmpdir() as out:
+            first = Path(out) / "a.csv"
+            second = Path(out) / "b.csv"
+            self.assertEqual(main(["--out", str(first), "--n", "5", "--seed", "20261118", "--datasets", str(DATA)]), 0)
+            self.assertEqual(main(["--out", str(second), "--n", "5", "--seed", "20261118", "--datasets", str(DATA)]), 0)
+            self.assertEqual(first.read_text(encoding="utf-8"), second.read_text(encoding="utf-8"))
+            other = Path(out) / "c.csv"
+            main(["--out", str(other), "--n", "5", "--seed", "1", "--datasets", str(DATA)])
+            self.assertNotEqual(first.read_text(encoding="utf-8"), other.read_text(encoding="utf-8"))
+            header = first.read_text(encoding="utf-8").splitlines()[0]
+            self.assertIn("revisao_humana", header)
+            self.assertEqual(len(first.read_text(encoding="utf-8").splitlines()), 6)
+
+    def test_cells_sample_keeps_grades(self):
+        from grade.amostra import main
+
+        cells = [
+            {"tool": "exa", "prova": "empresas", "item_id": "e01", "field": "cidade", "grade": "certo", "expected": "JARAGUA DO SUL", "answer": "Jaraguá do Sul"},
+            {"tool": "exa", "prova": "empresas", "item_id": "e01", "field": "ruido", "grade": "metrica", "expected": "", "answer": "0"},
+        ]
+        with self._tmpdir() as out:
+            path = Path(out) / "cells.jsonl"
+            path.write_text("\n".join(json.dumps(cell) for cell in cells) + "\n", encoding="utf-8")
+            dest = Path(out) / "amostra.csv"
+            main(["--cells", str(path), "--out", str(dest), "--n", "10", "--seed", "3"])
+            text = dest.read_text(encoding="utf-8")
+            self.assertIn("e01", text)
+            self.assertIn("certo", text)
+            self.assertNotIn("metrica", text)
 
     def _tmpdir(self):
         import tempfile

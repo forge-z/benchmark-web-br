@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
-"""Parallel search, extract, and Task core.
+"""Parallel search, extract, and Task core, all on /v1.
 
-The news and page proofs use the beta endpoints the benchmark names:
-POST /v1beta/search and POST /v1beta/extract.
-`max_chars_total` sits inside `excerpts`, which is where the beta schema puts it.
-The current v1 API moved that field to the top level. See README, decisões em aberto.
+Docs read on 2026-11-18:
+- POST /v1/search: search_queries is required; max_chars_total is top-level.
+  max_results lives in advanced_settings. Mode omitted: the default is advanced.
+- POST /v1/extract: urls is required; full_content lives in advanced_settings.
+- POST /v1/tasks/runs: processor core, only on prova 3. output_schema is
+  {"type": "json", "json_schema": {...}}.
 
-Task core (POST /v1/tasks/runs, processor core) runs only on prova 3.
-No FindAll.
-
-Docs read on 2026-11-18: https://docs.parallel.ai
+No beta header. No FindAll.
 """
 
 from __future__ import annotations
@@ -17,19 +16,15 @@ from __future__ import annotations
 from runners import common, costs, fields
 
 BASE = "https://api.parallel.ai"
-SEARCH = f"{BASE}/v1beta/search"
-EXTRACT = f"{BASE}/v1beta/extract"
+SEARCH = f"{BASE}/v1/search"
+EXTRACT = f"{BASE}/v1/extract"
 TASKS = f"{BASE}/v1/tasks/runs"
 KEY = "PARALLEL_API_KEY"
-BETA = "search-extract-2025-10-10"
 MAX_CHARS = 8000
 
 
-def _headers(beta: bool) -> dict:
-    headers = {"x-api-key": common.header_key(KEY), "Content-Type": "application/json"}
-    if beta:
-        headers["parallel-beta"] = BETA
-    return headers
+def _headers() -> dict:
+    return {"x-api-key": common.header_key(KEY), "Content-Type": "application/json"}
 
 
 def _objective(row, ctx) -> str:
@@ -44,15 +39,15 @@ def _search_body(objective: str, query: str) -> dict:
     return {
         "objective": objective,
         "search_queries": [query],
-        "max_results": 10,
-        "excerpts": {"max_chars_total": MAX_CHARS},
+        "max_chars_total": MAX_CHARS,
+        "advanced_settings": {"max_results": 10},
     }
 
 
 def plan_search(row, ctx) -> list[dict]:
     notes = (
-        "POST /v1beta/search. max_chars_total vai dentro de excerpts, como na beta. "
-        "Custo estimado pelo teto v1 advanced (US$ 5 / 1.000), porque a beta não publica preço próprio."
+        "POST /v1/search. max_chars_total no topo; max_results em advanced_settings. "
+        "Modo omitido: o padrão documentado é advanced, US$ 5 / 1.000."
     )
     if ctx["prova"] == "noticias":
         body = _search_body(row["consulta"], row["consulta"])
@@ -61,20 +56,19 @@ def plan_search(row, ctx) -> list[dict]:
         body = {
             "urls": [row["url"]],
             "objective": _objective(row, ctx),
-            "excerpts": {"max_chars_total": MAX_CHARS},
-            "full_content": True,
+            "max_chars_total": MAX_CHARS,
+            "advanced_settings": {"full_content": True},
         }
         return [common.call_record(
             "extract", "POST", EXTRACT, body, credits=None,
             cost=costs.PARALLEL_EXTRACT_USD,
-            notes="POST /v1beta/extract com full_content. Preço de lista v1: US$ 1 / 1.000 URLs.",
+            notes="POST /v1/extract. full_content fica em advanced_settings. Preço de lista: US$ 1 / 1.000 URLs.",
         )]
     body = _search_body(_objective(row, ctx), row["nome"])
     extract = {
         "urls": [],
         "objective": _objective(row, ctx),
-        "excerpts": {"max_chars_total": MAX_CHARS},
-        "full_content": False,
+        "max_chars_total": MAX_CHARS,
     }
     return [
         common.call_record("search", "POST", SEARCH, body, credits=None, cost=costs.PARALLEL_SEARCH_CEILING_USD, notes=notes),
@@ -92,8 +86,12 @@ def plan_task(row, ctx) -> list[dict]:
         "input": common.task_text(row["nome"], ctx["perguntas"]),
         "task_spec": {
             "output_schema": {
-                "type": "object",
-                "properties": {field: {"type": "string"} for field in fields.COMPANY_FIELDS},
+                "type": "json",
+                "json_schema": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {field: {"type": "string"} for field in fields.COMPANY_FIELDS},
+                },
             }
         },
     }
@@ -132,11 +130,11 @@ def _apply_text(answers: dict, text: str, urls: list[str]) -> None:
 def execute_search(row, ctx) -> dict:
     planned = plan_search(row, ctx)
     if ctx["prova"] == "noticias":
-        status, payload, _raw = common.request_json("POST", SEARCH, headers=_headers(True), body=planned[0]["request"])
+        status, payload, _raw = common.request_json("POST", SEARCH, headers=_headers(), body=planned[0]["request"])
         planned[0]["http_status"] = status
         return {"output": {"items": _items(payload)}, "calls": planned, "http_status": status, "error": "" if status == 200 else f"http {status}"}
     if ctx["prova"] == "leitura":
-        status, payload, _raw = common.request_json("POST", EXTRACT, headers=_headers(True), body=planned[0]["request"])
+        status, payload, _raw = common.request_json("POST", EXTRACT, headers=_headers(), body=planned[0]["request"])
         planned[0]["http_status"] = status
         results = payload.get("results") or []
         first = results[0] if results else {}
@@ -148,7 +146,7 @@ def execute_search(row, ctx) -> dict:
         page["price_brl"] = fields.canonical_price(page["text"])
         page["blocked"] = status in {401, 402, 403, 429}
         return {"output": page, "calls": planned, "http_status": status, "error": "" if status == 200 else f"http {status}"}
-    status, payload, _raw = common.request_json("POST", SEARCH, headers=_headers(True), body=planned[0]["request"])
+    status, payload, _raw = common.request_json("POST", SEARCH, headers=_headers(), body=planned[0]["request"])
     planned[0]["http_status"] = status
     found = _items(payload)
     urls = [item["url"] for item in found if item["url"]][:3]
@@ -159,7 +157,7 @@ def execute_search(row, ctx) -> dict:
         body["urls"] = urls
         planned[1]["request"] = body
         planned[1]["estimated_cost_usd"] = len(urls) * costs.PARALLEL_EXTRACT_USD
-        status2, payload2, _raw2 = common.request_json("POST", EXTRACT, headers=_headers(True), body=planned[1]["request"])
+        status2, payload2, _raw2 = common.request_json("POST", EXTRACT, headers=_headers(), body=planned[1]["request"])
         planned[1]["http_status"] = status2
         chunks = []
         for result in payload2.get("results") or []:
@@ -175,7 +173,7 @@ def execute_search(row, ctx) -> dict:
 
 def execute_task(row, ctx) -> dict:
     planned = plan_task(row, ctx)
-    status, payload, _raw = common.request_json("POST", TASKS, headers=_headers(False), body=planned[0]["request"])
+    status, payload, _raw = common.request_json("POST", TASKS, headers=_headers(), body=planned[0]["request"])
     planned[0]["http_status"] = status
     run_id = payload.get("run_id") or ""
     answers = fields.empty_answers()
@@ -183,7 +181,7 @@ def execute_task(row, ctx) -> dict:
     if run_id:
         result_url = f"{TASKS}/{run_id}/result"
         status2, payload2, _raw2 = common.request_json(
-            "GET", result_url, headers=_headers(False), params={"timeout": 60}, timeout=70,
+            "GET", result_url, headers=_headers(), params={"timeout": 60}, timeout=70,
         )
         planned.append(common.call_record(
             "task_result", "GET", result_url, {"timeout": 60},

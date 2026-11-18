@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Firecrawl search, scrape, and extract. No agent endpoint.
+"""Firecrawl search and scrape. No agent endpoint, no /extract.
 
 Docs read on 2026-11-18:
 - POST https://api.firecrawl.dev/v2/search
 - POST https://api.firecrawl.dev/v2/scrape
-- POST https://api.firecrawl.dev/v2/extract  (removido em 2026-12-10; ver README)
 
+A prova 3 usa scrape com formats json (schema + prompt) no lugar de /v2/extract,
+que sai do ar em 2026-12-10. O JSON custa 4 créditos além do 1 da página.
 `tbs` só filtra a fonte web, não a fonte news. A prova 1 usa web + tbs na janela de 48 h.
 Auth: Authorization Bearer from FIRECRAWL_API_KEY. Sem chave, a ferramenta é pulada
 (não usamos o modo sem chave).
@@ -53,24 +54,27 @@ def plan(row, ctx) -> list[dict]:
             notes="1 crédito por página em markdown. Sem JSON, para não somar os 4 créditos do modo LLM.",
         )]
     search = {"query": row["nome"], "limit": 10, "sources": ["web"]}
-    extract = {
-        "urls": [],
-        "prompt": common.task_text(row["nome"], ctx["perguntas"]),
-        "schema": _schema(),
-        "enableWebSearch": False,
-    }
-    return [
-        common.call_record(
-            "search", "POST", f"{BASE}/search", search,
-            credits=costs.FIRECRAWL_SEARCH_CREDITS_PER_10, cost=None,
-            notes="2 créditos por 10 resultados.",
-        ),
-        common.call_record(
-            "extract", "POST", f"{BASE}/extract", extract,
-            credits=None, cost=None,
-            notes="Extract cobra por token (1 crédito = 15 tokens). O valor só existe na resposta. Endpoint sai do ar em 2026-12-10.",
-        ),
-    ]
+    calls = [common.call_record(
+        "search", "POST", f"{BASE}/search", search,
+        credits=costs.FIRECRAWL_SEARCH_CREDITS_PER_10, cost=None,
+        notes="2 créditos por 10 resultados.",
+    )]
+    prompt = common.task_text(row["nome"], ctx["perguntas"])
+    for _ in range(3):
+        body = {
+            "url": "",
+            "formats": [{"type": "json", "schema": _schema(), "prompt": prompt}],
+        }
+        calls.append(common.call_record(
+            "scrape_json", "POST", f"{BASE}/scrape", body,
+            credits=costs.FIRECRAWL_SCRAPE_JSON_CREDITS, cost=None,
+            notes=(
+                "POST /v2/scrape com formato json. 5 créditos por página (1 do scrape + 4 do JSON). "
+                "A URL fica vazia no dry-run e é preenchida com o resultado da busca, até 3 páginas. "
+                "Substitui /v2/extract."
+            ),
+        ))
+    return calls
 
 
 def _items(payload: dict) -> list[dict]:
@@ -116,31 +120,26 @@ def execute(row, ctx) -> dict:
     planned[0]["http_status"] = status
     urls = [item["url"] for item in _items(payload) if item["url"]][:3]
     answers = fields.empty_answers()
-    if urls:
-        body = dict(planned[1]["request"])
-        body["urls"] = urls
-        planned[1]["request"] = body
-        status2, payload2, _raw2 = common.request_json("POST", f"{BASE}/extract", headers=_headers(), body=body, timeout=60)
-        planned[1]["http_status"] = status2
-        job = payload2.get("id")
-        data = payload2.get("data")
-        if job and not data:
-            status3, payload3, _raw3 = common.request_json("GET", f"{BASE}/extract/{job}", headers=_headers(), timeout=60)
-            planned.append(common.call_record(
-                "extract_status", "GET", f"{BASE}/extract/{job}", {},
-                credits=None, cost=None, notes="Uma leitura do job. Sem loop longo.", status=status3,
-            ))
-            data = payload3.get("data")
-            status2 = status3
+    for index, call in enumerate(planned[1:]):
+        if index >= len(urls):
+            call["estimated_credits"] = 0
+            call["cost_notes"] += " Não enviada: a busca devolveu menos de 3 URLs."
+            continue
+        body = dict(call["request"])
+        body["url"] = urls[index]
+        call["request"] = body
+        status2, payload2, _raw2 = common.request_json("POST", f"{BASE}/scrape", headers=_headers(), body=body, timeout=60)
+        call["http_status"] = status2
+        data = ((payload2.get("data") or {}).get("json") or {}) if isinstance(payload2, dict) else {}
         if isinstance(data, dict):
             for field in fields.COMPANY_FIELDS:
                 value = data.get(field)
-                if isinstance(value, str):
+                if isinstance(value, str) and value and not answers[field]["value"]:
                     answers[field]["value"] = value
-                    answers[field]["citations"] = urls[:1]
-        credits = payload2.get("creditsUsed") or payload2.get("credits_used")
+                    answers[field]["citations"] = [urls[index]]
+        credits = payload2.get("creditsUsed") or payload2.get("credits_used") if isinstance(payload2, dict) else None
         if isinstance(credits, int):
-            planned[1]["estimated_credits"] = credits
+            call["estimated_credits"] = credits
     return {
         "output": {"answers": answers, "mode": "search_extract"},
         "calls": planned, "http_status": status,
