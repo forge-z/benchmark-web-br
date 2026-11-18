@@ -135,6 +135,23 @@ def _company_fill(answers: dict, payload: dict, nome: str) -> None:
         break
 
 
+def _page_meta(payload: dict) -> tuple[str, str]:
+    """Title and publish date from the scrape `metadata` (title, openGraph, publishedTime, JSON-LD)."""
+    meta = payload.get("metadata") if isinstance(payload.get("metadata"), dict) else {}
+    og = meta.get("openGraph") if isinstance(meta.get("openGraph"), dict) else {}
+    title = meta.get("title") or og.get("title") or ""
+    published = meta.get("publishedTime") or og.get("article:published_time") or ""
+    if not published:
+        blocks = meta.get("jsonLd") if isinstance(meta.get("jsonLd"), list) else []
+        stack = list(blocks)
+        while stack and not published:
+            item = stack.pop(0)
+            if isinstance(item, dict):
+                published = item.get("datePublished") or ""
+                stack.extend(item.get("@graph") or [])
+    return str(title).strip(), fields.to_iso(str(published)) if published else ""
+
+
 def execute(row, ctx) -> dict:
     planned = plan(row, ctx)
     if ctx["prova"] == "noticias":
@@ -149,6 +166,7 @@ def execute(row, ctx) -> dict:
         if not text and isinstance(payload.get("data"), dict):
             text = payload["data"].get("markdown") or ""
         page = fields.empty_page(row["url"])
+        page["title"], page["published_at"] = _page_meta(payload)
         page["text"] = (text or "")[:20000]
         page["price_brl"] = fields.canonical_price(page["text"])
         page["blocked"] = status in {401, 402, 403, 429}

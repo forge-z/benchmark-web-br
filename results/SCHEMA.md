@@ -1,6 +1,6 @@
 # Resultados
 
-Um JSONL por execução, uma linha por item e ferramenta. O diretório fica vazio no git: `results/*.jsonl` está no `.gitignore`. O nome do arquivo é `{ferramenta}__{prova}__{run_id}.jsonl`.
+Um JSONL por execução, uma linha por item e ferramenta. JSONL solto em `results/*.jsonl` fica de fora do git (`.gitignore`). Uma rodada publicada, com o texto de terceiro já retirado, mora em `results/round-*/`. O nome do arquivo é `{ferramenta}__{prova}__{run_id}.jsonl`.
 
 A linha segue `schema_version` `1`:
 
@@ -46,4 +46,16 @@ Leitura:
 
 Os dez campos estão em `runners/fields.py` (`COMPANY_FIELDS`). `parallel_task_core` usa `mode` `task_core`.
 
-O texto extraído fica no JSONL local para a correção. Não versionar esse arquivo: ele pode repetir texto de terceiros.
+O texto extraído fica no JSONL local para a correção. Não versionar esse arquivo cru: ele pode repetir texto de terceiros.
+
+## Rodada publicada
+
+`results/round-1-2026-11-18/` entra no git de propósito. O `.gitignore` só casa `results/*.jsonl` na raiz de `results/`, então o subdiretório não precisou de exceção.
+
+Para não redistribuir texto de terceiro:
+
+- `output.text` da leitura está vazio; no lugar ficam `text_chars` e `text_sha256`
+- `snippet` das notícias está vazio; no lugar fica `snippet_chars`
+- URL de perfil pessoal do LinkedIn, slug de post ou pulse e título que ainda trazia nome de pessoa viram `[perfil-pessoal-removido]`
+
+Os campos de `schema_version` `1` continuam presentes. Os campos extras não entram no líquido.
